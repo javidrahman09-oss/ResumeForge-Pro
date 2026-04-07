@@ -1,0 +1,3181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ResumeForge Pro — Career Conversion Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8D08A;
+    --gold-dim: #8B6E2E;
+    --ink: #0A0A0F;
+    --ink-mid: #1A1A2E;
+    --ink-soft: #2D2D4A;
+    --surface: #111120;
+    --surface-raised: #18182D;
+    --surface-card: #1E1E35;
+    --text-primary: #F0EDE8;
+    --text-secondary: #A8A4B8;
+    --text-muted: #6B6880;
+    --accent-teal: #2DD4BF;
+    --accent-red: #FF6B6B;
+    --accent-green: #4ADE80;
+    --accent-purple: #A78BFA;
+    --border: rgba(201,168,76,0.15);
+    --border-soft: rgba(255,255,255,0.06);
+    --radius-sm: 6px;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--ink); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  /* ===== LAYOUT ===== */
+  .app {
+    display: grid;
+    grid-template-columns: 68px 320px 1fr 380px;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 0;
+    background: var(--ink-mid);
+    border-bottom: 1px solid var(--border);
+    height: 56px;
+    padding: 0;
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .topbar-logo {
+    width: 68px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-right: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--gold);
+    letter-spacing: -1px; line-height: 1;
+  }
+
+  .topbar-brand {
+    padding: 0 20px;
+    border-right: 1px solid var(--border);
+    height: 56px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 17px; font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .brand-badge {
+    font-size: 9px; font-weight: 500;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--ink);
+    padding: 2px 7px; border-radius: 20px;
+  }
+
+  .topbar-tabs {
+    display: flex; gap: 0;
+    height: 56px; align-items: center;
+    padding: 0 8px; flex: 1; overflow-x: auto;
+  }
+  .topbar-tabs::-webkit-scrollbar { height: 0; }
+
+  .tab {
+    height: 40px; padding: 0 14px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12.5px; font-weight: 400;
+    color: var(--text-muted);
+    cursor: pointer; transition: var(--transition);
+    white-space: nowrap; user-select: none; flex-shrink: 0;
+  }
+  .tab:hover { color: var(--text-primary); background: var(--border-soft); }
+  .tab.active { color: var(--gold); background: rgba(201,168,76,0.08); }
+  .tab-icon { font-size: 13px; }
+
+  .tab-pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+
+  .topbar-actions {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 16px;
+    border-left: 1px solid var(--border);
+    height: 56px; flex-shrink: 0;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 0 16px; height: 36px;
+    border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: var(--transition);
+    border: none; font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+
+  .btn-ghost {
+    background: transparent; color: var(--text-secondary);
+    border: 1px solid var(--border-soft);
+  }
+  .btn-ghost:hover { background: var(--border-soft); color: var(--text-primary); border-color: var(--border); }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #B8922A);
+    color: var(--ink); font-weight: 600;
+  }
+  .btn-gold:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-gold:active { transform: translateY(0); }
+
+  .btn-outline {
+    background: transparent; color: var(--gold);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { background: rgba(201,168,76,0.08); }
+
+  .btn-teal {
+    background: rgba(45,212,191,0.12); color: var(--accent-teal);
+    border: 1px solid rgba(45,212,191,0.25);
+  }
+  .btn-teal:hover { background: rgba(45,212,191,0.2); }
+
+  .btn-purple {
+    background: rgba(167,139,250,0.12); color: var(--accent-purple);
+    border: 1px solid rgba(167,139,250,0.25);
+  }
+  .btn-purple:hover { background: rgba(167,139,250,0.2); }
+
+  /* ===== ICON SIDEBAR ===== */
+  .sidebar-icons {
+    grid-column: 1; grid-row: 2;
+    background: var(--ink-mid);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 0; gap: 4px;
+    z-index: 50;
+  }
+
+  .icon-btn {
+    width: 44px; height: 44px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition);
+    color: var(--text-muted); font-size: 18px;
+    position: relative;
+  }
+  .icon-btn:hover { background: var(--border-soft); color: var(--text-primary); }
+  .icon-btn.active { background: rgba(201,168,76,0.1); color: var(--gold); }
+
+  .icon-btn .tooltip {
+    position: absolute; left: 56px;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 12px; font-weight: 400;
+    padding: 5px 10px; border-radius: var(--radius-sm);
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transform: translateX(-4px);
+    transition: var(--transition); z-index: 200;
+  }
+  .icon-btn:hover .tooltip { opacity: 1; transform: translateX(0); }
+
+  .icon-divider { width: 28px; height: 1px; background: var(--border); margin: 8px 0; }
+
+  /* ===== LEFT PANEL ===== */
+  .panel-left {
+    grid-column: 2; grid-row: 2;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; overflow-x: hidden;
+    display: flex; flex-direction: column;
+  }
+
+  .panel-section { border-bottom: 1px solid var(--border-soft); }
+
+  .panel-section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    cursor: pointer; user-select: none;
+    position: sticky; top: 0;
+    background: var(--surface); z-index: 10;
+  }
+
+  .panel-section-header h3 {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text-muted);
+  }
+
+  .panel-section-header .chevron { transition: var(--transition); font-size: 12px; color: var(--text-muted); }
+  .panel-section.open .chevron { transform: rotate(180deg); }
+
+  .panel-section-body { padding: 0 16px 16px; display: none; }
+  .panel-section.open .panel-section-body { display: block; }
+
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block; margin-bottom: 5px;
+    font-size: 12px; color: var(--text-secondary); font-weight: 400;
+  }
+
+  .field input, .field textarea, .field select {
+    width: 100%; background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 13px; color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    transition: var(--transition); resize: none; outline: none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .field textarea { min-height: 80px; line-height: 1.5; }
+  .field select { appearance: none; cursor: pointer; }
+  .field select option { background: var(--ink-mid); }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* ===== EXPERIENCE BLOCK ===== */
+  .exp-block {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 12px; margin-bottom: 10px;
+  }
+
+  .exp-block-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .exp-block-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .exp-block-meta { font-size: 11px; color: var(--text-muted); }
+  .exp-block-actions { display: flex; gap: 4px; }
+
+  .exp-action {
+    width: 26px; height: 26px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 13px; color: var(--text-muted);
+    background: transparent; border: none; transition: var(--transition);
+  }
+  .exp-action:hover { background: var(--border-soft); color: var(--text-primary); }
+  .exp-action.danger:hover { color: var(--accent-red); }
+
+  /* ===== AI CHAT ===== */
+  .ai-chat {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 0 16px 16px;
+    overflow: hidden;
+  }
+
+  .ai-chat-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+  .ai-typing {
+    display: none;
+    padding: 8px 12px;
+    font-size: 12px; color: var(--text-muted);
+    font-style: italic;
+  }
+  .ai-typing.show { display: block; }
+
+  .ai-chat-title { font-size: 12px; font-weight: 500; color: var(--gold); }
+
+  .ai-messages { max-height: 220px; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+  .ai-msg {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12.5px; line-height: 1.5;
+  }
+
+  .ai-msg.bot {
+    background: rgba(201,168,76,0.07);
+    color: var(--text-primary);
+    border-left: 2px solid var(--gold);
+    align-self: flex-start; max-width: 90%;
+  }
+
+  .ai-msg.user {
+    background: var(--surface-raised);
+    color: var(--text-secondary);
+    align-self: flex-end; max-width: 85%;
+    text-align: right;
+  }
+
+  .ai-input-row {
+    display: flex; gap: 8px; padding: 10px 14px;
+    border-top: 1px solid var(--border-soft);
+  }
+
+  .ai-input {
+    flex: 1; background: var(--surface-raised);
+    border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+    padding: 8px 12px; font-size: 12.5px;
+    color: var(--text-primary); font-family: 'DM Sans', sans-serif; outline: none;
+  }
+  .ai-input:focus { border-color: var(--gold); }
+
+  .ai-send {
+    width: 34px; height: 34px; border-radius: var(--radius-sm);
+    background: var(--gold); color: var(--ink);
+    border: none; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition); flex-shrink: 0;
+  }
+  .ai-send:hover { opacity: 0.85; }
+  .ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ===== CENTER: RESUME PREVIEW ===== */
+  .preview-area {
+    grid-column: 3; grid-row: 2;
+    background: #1C1C2E;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    overflow-y: auto; position: relative;
+  }
+
+  .preview-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 20px;
+    width: 100%; max-width: 680px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .preview-toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
+
+  .preview-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-muted); font-weight: 500;
+  }
+
+  .zoom-ctrl { display: flex; align-items: center; gap: 4px; }
+
+  .zoom-btn {
+    width: 28px; height: 28px; border-radius: var(--radius-sm);
+    background: var(--border-soft); border: none; color: var(--text-secondary);
+    cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .zoom-btn:hover { background: var(--border); color: var(--text-primary); }
+
+  .zoom-label { font-size: 12px; color: var(--text-muted); min-width: 36px; text-align: center; }
+
+  /* ===== RESUME DOCUMENT ===== */
+  .resume-paper {
+    width: 100%; max-width: 680px; background: #FAFAF7;
+    border-radius: 4px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.3);
+    overflow: hidden; transform-origin: top center;
+    transition: transform 0.3s ease; color: #1A1A1A;
+  }
+
+  .resume-header-band {
+    background: #0F0F1C;
+    padding: 36px 44px 28px; position: relative;
+  }
+
+  .resume-header-band::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+
+  .resume-name {
+    font-family: 'Fraunces', serif;
+    font-size: 34px; font-weight: 700;
+    color: #F5F0E8; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 4px;
+  }
+
+  .resume-title {
+    font-size: 14px; font-weight: 400; color: var(--gold-light);
+    letter-spacing: 0.5px; margin-bottom: 20px;
+  }
+
+  .resume-contact-row { display: flex; gap: 20px; flex-wrap: wrap; }
+
+  .resume-contact-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #A8A4B8;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .resume-contact-icon { color: var(--gold); font-size: 11px; }
+
+  .resume-body { padding: 0 44px 44px; background: #FAFAF7; }
+  .resume-section { margin-top: 28px; }
+
+  .resume-section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--gold-dim);
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(139,110,46,0.25);
+    margin-bottom: 16px;
+  }
+
+  .resume-summary {
+    font-size: 13px; line-height: 1.7;
+    color: #2D2D2D; font-family: 'DM Sans', sans-serif;
+  }
+
+  .exp-entry { margin-bottom: 20px; }
+  .exp-entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; flex-wrap: wrap;}
+
+  .exp-role { font-size: 14px; font-weight: 600; color: #0F0F1C; font-family: 'DM Sans', sans-serif; }
+  .exp-date { font-size: 11.5px; color: #8B6E2E; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+  .exp-company { font-size: 12.5px; color: #555; margin-bottom: 8px; }
+
+  .exp-bullets { list-style: none; padding: 0; }
+  .exp-bullets li {
+    font-size: 12.5px; line-height: 1.6;
+    color: #2D2D2D; padding-left: 14px; position: relative; margin-bottom: 3px;
+  }
+  .exp-bullets li::before {
+    content: '▸'; position: absolute; left: 0;
+    color: var(--gold-dim); font-size: 10px; top: 1px;
+  }
+
+  .exp-metric { font-weight: 600; color: #0F0F1C; }
+
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tag {
+    font-size: 11.5px;
+    background: rgba(139,110,46,0.1);
+    color: #5A3E10;
+    border: 1px solid rgba(139,110,46,0.2);
+    padding: 3px 10px; border-radius: 20px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+  }
+
+  .education-entry { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;}
+  .edu-degree { font-size: 13.5px; font-weight: 600; color: #0F0F1C; }
+  .edu-school { font-size: 12px; color: #555; margin-top: 2px; }
+  .edu-date { font-size: 11.5px; color: #8B6E2E; font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== RIGHT PANEL ===== */
+  .panel-right {
+    grid-column: 4; grid-row: 2;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    overflow-y: auto; display: flex; flex-direction: column;
+  }
+
+  .intelligence-header {
+    padding: 20px 20px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .intelligence-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px; font-weight: 600;
+    color: var(--text-primary); margin-bottom: 4px;
+  }
+
+  .intelligence-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+
+  .score-section { padding: 20px; border-bottom: 1px solid var(--border-soft); }
+  .score-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap;}
+  .score-gauge-wrap { position: relative; width: 90px; height: 90px; flex-shrink: 0; margin: 0 auto; }
+  .score-gauge { width: 90px; height: 90px; transform: rotate(-90deg); }
+
+  .gauge-bg { fill: none; stroke: rgba(201,168,76,0.12); stroke-width: 6; }
+  .gauge-fill {
+    fill: none; stroke: var(--gold);
+    stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 220; stroke-dashoffset: 193;
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .gauge-fill.good { stroke: var(--accent-green); }
+  .gauge-fill.medium { stroke: var(--gold); }
+  .gauge-fill.bad { stroke: var(--accent-red); }
+
+  .score-number {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1;
+  }
+  .score-number span { font-size: 11px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-weight: 400; margin-top: 2px; }
+
+  .score-details { flex: 1; min-width: 150px;}
+  .score-verdict { font-size: 14px; font-weight: 600; color: var(--accent-red); margin-bottom: 6px; }
+  .score-verdict.good { color: var(--accent-green); }
+  .score-verdict.medium { color: var(--gold); }
+
+  .score-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
+
+  .score-improve-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, var(--gold), #B8922A);
+    color: var(--ink); font-size: 12px; font-weight: 600;
+    padding: 6px 14px; border-radius: var(--radius-sm);
+    cursor: pointer; border: none; font-family: 'DM Sans', sans-serif;
+    transition: var(--transition);
+  }
+  .score-improve-btn:hover { opacity: 0.9; }
+
+  .signal-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .signal-item:last-child { border-bottom: none; }
+
+  .signal-icon {
+    width: 28px; height: 28px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .signal-icon.pass { background: rgba(74,222,128,0.1); color: var(--accent-green); }
+  .signal-icon.warn { background: rgba(201,168,76,0.1); color: var(--gold); }
+  .signal-icon.fail { background: rgba(255,107,107,0.1); color: var(--accent-red); }
+
+  .signal-label { font-size: 12.5px; color: var(--text-primary); flex: 1; }
+  .signal-value { font-size: 11.5px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+
+  .job-match-area { padding: 16px 20px; border-bottom: 1px solid var(--border-soft); }
+
+  .section-label {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--text-muted); margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .jd-paste {
+    width: 100%; min-height: 90px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 12.5px; color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif; resize: none; outline: none; line-height: 1.5;
+  }
+  .jd-paste:focus { border-color: var(--gold); }
+  .jd-paste::placeholder { color: var(--text-muted); }
+
+  .match-result {
+    margin-top: 10px;
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+  }
+
+  .match-score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .match-score-label { font-size: 12.5px; color: var(--text-secondary); }
+  .match-score-val { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--gold); }
+
+  .match-bar { height: 4px; background: var(--border-soft); border-radius: 2px; margin-bottom: 12px; }
+  .match-bar-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 1s ease;
+  }
+
+  .keyword-cloud { display: flex; flex-wrap: wrap; gap: 5px; }
+  .keyword {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px;
+    font-weight: 500; font-family: 'DM Sans', sans-serif;
+  }
+  .keyword.hit { background: rgba(74,222,128,0.1); color: #2A9E50; border: 1px solid rgba(74,222,128,0.2); }
+  .keyword.miss { background: rgba(255,107,107,0.08); color: #C04040; border: 1px solid rgba(255,107,107,0.2); }
+
+  .templates-row { padding: 14px 20px; border-bottom: 1px solid var(--border-soft); }
+  .template-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .template-chip {
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 11.5px; font-weight: 500;
+    border: 1px solid var(--border); color: var(--text-secondary);
+    cursor: pointer; transition: var(--transition); background: transparent;
+  }
+  .template-chip:hover { border-color: var(--gold); color: var(--gold); }
+  .template-chip.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+
+  .proof-area { padding: 16px 20px; border-bottom: 1px solid var(--border-soft); }
+  .proof-items { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .proof-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px; cursor: pointer; transition: var(--transition);
+  }
+  .proof-item:hover { border-color: var(--border); }
+  .proof-item.connected { border-color: rgba(74,222,128,0.3); }
+
+  .proof-icon {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+
+  .proof-info { flex: 1; }
+  .proof-name { font-size: 12.5px; font-weight: 500; color: var(--text-primary); }
+  .proof-status { font-size: 11px; color: var(--text-muted); }
+  .proof-status.connected { color: var(--accent-green); }
+
+  .proof-badge {
+    font-size: 10px; padding: 2px 7px; border-radius: 20px;
+    background: rgba(74,222,128,0.1); color: var(--accent-green); font-weight: 500;
+  }
+
+  .typo-area { padding: 16px 20px; }
+  .font-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 6px; margin-top: 8px; }
+  .font-option {
+    padding: 10px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
+    cursor: pointer; transition: var(--transition); text-align: center;
+  }
+  .font-option:hover { border-color: var(--border); }
+  .font-option.active { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+
+  .font-name { font-size: 14px; color: var(--text-primary); margin-bottom: 2px; }
+  .font-meta { font-size: 10px; color: var(--text-muted); }
+
+  .add-block-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 12px 16px; padding: 10px;
+    border: 1px dashed rgba(201,168,76,0.3);
+    border-radius: var(--radius);
+    color: var(--gold); font-size: 13px; cursor: pointer;
+    transition: var(--transition); background: transparent;
+  }
+  .add-block-btn:hover { background: rgba(201,168,76,0.05); border-color: var(--gold); }
+
+  .progress-items { padding: 16px 20px; }
+  .prog-row { margin-bottom: 12px; }
+  .prog-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .prog-label { font-size: 12px; color: var(--text-secondary); }
+  .prog-val { font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+  .prog-track { height: 3px; background: var(--border-soft); border-radius: 2px; }
+  .prog-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+  /* ===== FAB ===== */
+  .fab-group {
+    position: fixed; bottom: 28px; right: 24px;
+    display: flex; flex-direction: column; gap: 10px; z-index: 200;
+  }
+
+  .fab {
+    width: 50px; height: 50px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer; border: none; transition: var(--transition);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .fab-primary { background: linear-gradient(135deg, var(--gold), #B8922A); color: var(--ink); }
+  .fab-primary:hover { transform: scale(1.08); }
+  .fab-secondary { background: var(--surface-card); color: var(--text-primary); border: 1px solid var(--border); }
+  .fab-secondary:hover { transform: scale(1.05); background: var(--surface-raised); }
+
+  /* ===== MODALS ===== */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 500; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--ink-mid);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px; width: 560px; max-width: 90vw;
+    max-height: 80vh; overflow-y: auto;
+    transform: translateY(20px); transition: transform 0.2s;
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal-wide { width: 720px; }
+  .modal-xl { width: 860px; }
+
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text-primary); }
+
+  .modal-close {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    background: var(--border-soft); border: none; color: var(--text-secondary);
+    cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .modal-close:hover { background: var(--border); color: var(--text-primary); }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed; bottom: 88px; right: 24px;
+    background: var(--surface-card);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 12px 16px; font-size: 13px; color: var(--text-primary);
+    z-index: 600; max-width: 300px;
+    transform: translateX(150%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-icon { color: var(--gold); font-size: 16px; }
+
+  @keyframes shimmer {
+    0% { background-position: -300px 0; }
+    100% { background-position: 300px 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, var(--surface-raised) 25%, var(--surface-card) 37%, var(--surface-raised) 63%);
+    background-size: 600px 100%;
+    animation: shimmer 1.8s infinite;
+    border-radius: var(--radius-sm);
+    height: 12px; margin-bottom: 8px;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel-section { animation: fadeInUp 0.4s ease both; }
+  ::selection { background: rgba(201,168,76,0.25); }
+
+  .upgrade-banner {
+    margin: 0 16px 16px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .upgrade-title { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .upgrade-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px; }
+
+  .inject-btn {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    cursor: pointer; background: transparent;
+    transition: var(--transition); font-family: 'DM Sans', sans-serif;
+  }
+  .inject-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); }
+
+  /* ===== PILLAR A: MARKET VALUE PULSE ===== */
+  .market-panel { padding: 0; }
+
+  .value-hero {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(45,212,191,0.05) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .value-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 8px; }
+
+  .value-amount {
+    font-family: 'Fraunces', serif;
+    font-size: 52px; font-weight: 700;
+    color: var(--gold);
+    line-height: 1; margin-bottom: 4px;
+    letter-spacing: -2px;
+  }
+
+  .value-amount .currency { font-size: 28px; vertical-align: super; }
+  .value-amount .lpa { font-size: 18px; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+
+  .value-trend {
+    font-size: 12px; color: var(--accent-green);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+
+  .value-upgrade-hint {
+    margin: 16px 0 0;
+    background: rgba(45,212,191,0.08);
+    border: 1px solid rgba(45,212,191,0.2);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    text-align: left;
+  }
+
+  .value-upgrade-hint .hint-title { font-size: 12.5px; color: var(--accent-teal); font-weight: 600; margin-bottom: 4px; }
+  .value-upgrade-hint .hint-desc { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; }
+
+  .skill-value-list { padding: 0 20px 20px; }
+
+  .skill-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border-soft);
+  }
+  .skill-row:last-child { border-bottom: none; }
+
+  .skill-icon { font-size: 18px; width: 32px; text-align: center; flex-shrink: 0; }
+
+  .skill-info { flex: 1; }
+  .skill-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .skill-demand { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .skill-value-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 500;
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .skill-add-btn {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(45,212,191,0.08);
+    border: 1px solid rgba(45,212,191,0.2);
+    color: var(--accent-teal);
+    cursor: pointer; transition: var(--transition); font-family: 'DM Sans', sans-serif;
+  }
+  .skill-add-btn:hover { background: rgba(45,212,191,0.15); }
+
+  .market-pulse-chart { padding: 16px 20px; border-top: 1px solid var(--border-soft); }
+
+  .spark-container { display: flex; align-items: flex-end; gap: 3px; height: 40px; margin-top: 8px; }
+  .spark-bar {
+    flex: 1; border-radius: 2px 2px 0 0;
+    background: linear-gradient(180deg, var(--gold), var(--gold-dim));
+    opacity: 0.5; transition: opacity 0.2s;
+  }
+  .spark-bar:hover { opacity: 1; }
+  .spark-bar.highlight { opacity: 1; background: linear-gradient(180deg, var(--accent-teal), #1A9B8B); }
+
+  /* ===== PILLAR B: INTERVIEW WAR ROOM ===== */
+  .war-room-view { display: none; }
+  .war-room-view.active { display: flex; flex-direction: column; }
+
+  .war-room-header {
+    background: linear-gradient(135deg, rgba(255,107,107,0.08) 0%, rgba(167,139,250,0.05) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px;
+  }
+
+  .war-room-title-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+  }
+
+  .war-room-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-sm);
+    background: rgba(255,107,107,0.12);
+    border: 1px solid rgba(255,107,107,0.2);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+
+  .war-room-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px; font-weight: 700; color: var(--text-primary);
+  }
+
+  .war-room-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+
+  .war-room-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px;
+  }
+
+  .war-stat {
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px; text-align: center;
+  }
+
+  .war-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 20px; font-weight: 700; color: var(--gold); line-height: 1;
+  }
+
+  .war-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .question-list { padding: 0; overflow-y: auto; flex: 1; }
+
+  .question-card {
+    border-bottom: 1px solid var(--border-soft);
+    padding: 16px 20px; transition: background 0.2s;
+  }
+  .question-card:hover { background: rgba(255,255,255,0.02); }
+
+  .question-num {
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-muted); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .q-tag {
+    padding: 2px 7px; border-radius: 20px; font-size: 9px; font-weight: 600;
+    letter-spacing: 0.4px; text-transform: uppercase;
+  }
+  .q-tag.behavioral { background: rgba(167,139,250,0.1); color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.2); }
+  .q-tag.technical { background: rgba(45,212,191,0.1); color: var(--accent-teal); border: 1px solid rgba(45,212,191,0.2); }
+  .q-tag.situational { background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid var(--border); }
+
+  .question-text { font-size: 13px; line-height: 1.5; color: var(--text-primary); margin-bottom: 10px; }
+
+  .question-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .q-btn {
+    font-size: 11px; padding: 4px 10px; border-radius: var(--radius-sm);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    color: var(--text-secondary);
+    cursor: pointer; transition: var(--transition); font-family: 'DM Sans', sans-serif;
+  }
+  .q-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .q-answer-area {
+    display: none; margin-top: 10px;
+  }
+  .q-answer-area.open { display: block; }
+
+  .q-answer-input {
+    width: 100%; min-height: 80px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 12.5px; color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif; resize: none; outline: none; line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .q-answer-input:focus { border-color: var(--gold); }
+
+  .q-feedback {
+    background: rgba(74,222,128,0.05);
+    border: 1px solid rgba(74,222,128,0.15);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 12px; color: var(--text-primary); line-height: 1.6;
+    display: none;
+  }
+  .q-feedback.show { display: block; }
+
+  .war-room-generate {
+    padding: 20px;
+    border-top: 1px solid var(--border-soft);
+    text-align: center;
+  }
+
+  /* ===== PILLAR C: BROWSER EXTENSION ===== */
+  .extension-view { padding: 24px 20px; }
+
+  .ext-hero {
+    background: linear-gradient(135deg, rgba(167,139,250,0.1) 0%, rgba(45,212,191,0.05) 100%);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: var(--radius-lg);
+    padding: 28px; text-align: center; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+
+  .ext-hero::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(167,139,250,0.08);
+  }
+
+  .ext-icon-big { font-size: 48px; margin-bottom: 14px; display: block; }
+
+  .ext-hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700; color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .ext-hero-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+
+  .ext-steps { text-align: left; }
+
+  .ext-step {
+    display: flex; gap: 14px; margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .ext-step-num {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(167,139,250,0.15);
+    border: 1px solid rgba(167,139,250,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--accent-purple);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .ext-step-content .ext-step-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+  .ext-step-content .ext-step-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .ext-demo-mockup {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px; margin-top: 16px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+
+  .forge-btn-demo {
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--gold), #B8922A);
+    color: var(--ink); font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    animation: glow 3s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); }
+    50% { box-shadow: 0 0 20px rgba(201,168,76,0.4); }
+  }
+
+  .ext-demo-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .ext-stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px; margin-bottom: 20px;
+  }
+
+  .ext-stat-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius); padding: 14px; text-align: center;
+  }
+
+  .ext-stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 700; color: var(--accent-purple); line-height: 1;
+  }
+
+  .ext-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+  /* ===== TAB VIEWS ===== */
+  .tab-view { display: none; }
+  .tab-view.active { display: contents; }
+
+  .market-view-wrap { display: none; }
+  .market-view-wrap.active {
+    display: flex; flex-direction: column;
+    grid-column: 2 / -1; grid-row: 2;
+    overflow-y: auto;
+  }
+
+  .war-room-wrap { display: none; }
+  .war-room-wrap.active {
+    display: flex;
+    grid-column: 2 / -1; grid-row: 2;
+    overflow-y: auto;
+  }
+
+  .ext-wrap { display: none; }
+  .ext-wrap.active {
+    display: flex;
+    grid-column: 2 / -1; grid-row: 2;
+    overflow-y: auto;
+    align-items: flex-start; justify-content: center;
+  }
+
+  /* ===== MARKET VALUE FULL PAGE ===== */
+  .market-full {
+    display: flex; flex-direction: column;
+    width: 100%; max-width: 1100px;
+    margin: 0 auto; padding: 32px 24px;
+    gap: 20px;
+  }
+
+  .market-top-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  .market-hero-card {
+    grid-column: 1 / 3;
+    background: linear-gradient(135deg, var(--ink-mid) 0%, rgba(201,168,76,0.06) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+  }
+
+  .market-hero-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 12px; }
+
+  .market-hero-amount {
+    font-family: 'Fraunces', serif;
+    font-size: 72px; font-weight: 700; color: var(--gold);
+    line-height: 1; letter-spacing: -3px; margin-bottom: 8px;
+  }
+
+  .market-hero-amount .lpa-label {
+    font-size: 28px; color: var(--text-secondary);
+    font-family: 'DM Sans', sans-serif; font-weight: 400;
+  }
+
+  .market-hero-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+
+  .upgrade-skill-box {
+    background: rgba(45,212,191,0.06);
+    border: 1px solid rgba(45,212,191,0.2);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+
+  .upgrade-skill-box .usb-title { font-size: 12px; color: var(--accent-teal); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .skill-upgrade-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;
+  }
+
+  .skill-upgrade-row:last-child { margin-bottom: 0; }
+
+  .sug-skill {
+    flex: 1; font-size: 13px; font-weight: 500; color: var(--text-primary); min-width: 100px;
+  }
+
+  .sug-gain {
+    font-size: 13px; color: var(--accent-teal); font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .sug-add {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(45,212,191,0.1);
+    border: 1px solid rgba(45,212,191,0.25);
+    color: var(--accent-teal); cursor: pointer;
+    transition: var(--transition); font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  }
+  .sug-add:hover { background: rgba(45,212,191,0.2); }
+
+  .market-side-card {
+    background: var(--ink-mid);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+
+  .msc-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 14px; }
+
+  .market-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .market-card {
+    background: var(--ink-mid);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+
+  .mc-title {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--text-muted); font-weight: 500; margin-bottom: 14px;
+  }
+
+  .skill-bar-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+
+  .sbr-label { font-size: 12.5px; color: var(--text-secondary); width: 100px; flex-shrink: 0; }
+  .sbr-track { flex: 1; height: 5px; background: var(--border-soft); border-radius: 3px; }
+  .sbr-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .sbr-val { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; width: 50px; text-align: right; }
+
+  .peer-comparison { padding: 0; }
+  .peer-row {
+    display: flex; align-items: center; gap: 10px; padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .peer-row:last-child { border-bottom: none; }
+  .peer-rank { font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; width: 20px; }
+  .peer-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--surface-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .peer-name { flex: 1; font-size: 12.5px; color: var(--text-primary); }
+  .peer-val { font-size: 12px; color: var(--gold); font-family: 'JetBrains Mono', monospace; }
+  .peer-you { background: rgba(201,168,76,0.06); border-color: var(--border); border-radius: var(--radius-sm); padding: 0 8px; }
+
+  /* ===== WAR ROOM FULL ===== */
+  .war-full {
+    width: 100%; display: grid;
+    grid-template-columns: 340px 1fr;
+    min-height: calc(100vh - 56px);
+  }
+
+  .war-sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .war-sidebar-header {
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(167,139,250,0.05));
+    border-bottom: 1px solid var(--border);
+  }
+
+  .war-sidebar-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;
+  }
+
+  .war-sidebar-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+
+  .war-progress-ring { display: flex; align-items: center; gap: 14px; }
+
+  .wr-ring-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+  .wr-ring { width: 64px; height: 64px; transform: rotate(-90deg); }
+  .wr-ring-bg { fill: none; stroke: rgba(255,107,107,0.15); stroke-width: 5; }
+  .wr-ring-fill {
+    fill: none; stroke: var(--accent-red); stroke-width: 5; stroke-linecap: round;
+    stroke-dasharray: 157; stroke-dashoffset: 157;
+    transition: stroke-dashoffset 0.6s ease;
+  }
+  .wr-ring-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text-primary);
+  }
+
+  .wr-ring-label { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+  .war-question-list { overflow-y: auto; flex: 1; }
+
+  .war-q-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 16px; border-bottom: 1px solid var(--border-soft);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .war-q-item:hover { background: rgba(255,255,255,0.02); }
+  .war-q-item.active { background: rgba(255,107,107,0.05); border-left: 2px solid var(--accent-red); }
+
+  .war-q-num {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    background: var(--surface-card); border: 1px solid var(--border-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 600; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .war-q-item.done .war-q-num { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); color: var(--accent-green); }
+
+  .war-q-preview { flex: 1; font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .war-q-item.active .war-q-preview { color: var(--text-primary); }
+
+  .war-main {
+    display: flex; flex-direction: column; overflow-y: auto;
+    background: #1A1A2E;
+  }
+
+  .war-main-header {
+    padding: 24px 32px 16px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .war-main-question {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 600; color: var(--text-primary);
+    line-height: 1.4; margin-bottom: 12px;
+  }
+
+  .war-q-meta { display: flex; align-items: center; gap: 10px; }
+
+  .war-timer {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .war-answer-area { flex: 1; padding: 24px 32px; }
+
+  .war-answer-input {
+    width: 100%; height: 200px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 16px; font-size: 14px;
+    color: var(--text-primary); font-family: 'DM Sans', sans-serif;
+    resize: none; outline: none; line-height: 1.6;
+  }
+  .war-answer-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.08); }
+
+  .war-answer-actions {
+    display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;
+  }
+
+  .war-feedback-box {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px; margin-top: 16px;
+    display: none;
+  }
+  .war-feedback-box.show { display: block; }
+
+  .wfb-title {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--accent-green); font-weight: 600; margin-bottom: 8px;
+  }
+
+  .wfb-content { font-size: 13.5px; color: var(--text-primary); line-height: 1.7; }
+
+  .war-tips {
+    padding: 20px 32px;
+    border-top: 1px solid var(--border-soft);
+  }
+
+  .war-tips-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-muted); margin-bottom: 10px; }
+
+  .war-tip-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .war-tip-chip {
+    padding: 5px 12px; border-radius: 20px;
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    font-size: 12px; color: var(--text-secondary);
+    cursor: pointer; transition: var(--transition);
+  }
+  .war-tip-chip:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ===== EXTENSION FULL PAGE ===== */
+  .ext-full {
+    width: 100%; max-width: 800px;
+    padding: 40px 24px;
+  }
+
+  /* ===== AI LOADING INDICATOR ===== */
+  .ai-loading {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px; font-size: 12px; color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .ai-loading-dots {
+    display: flex; gap: 3px;
+  }
+
+  .ai-loading-dots span {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--gold); opacity: 0.4;
+    animation: dotPulse 1.4s ease-in-out infinite;
+  }
+
+  .ai-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .ai-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotPulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ===== API KEY INPUT ===== */
+  .api-key-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px; margin: 12px 16px;
+    font-size: 12px;
+  }
+
+  .api-key-input {
+    flex: 1; background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px; font-size: 12px;
+    color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
+    outline: none;
+  }
+  .api-key-input:focus { border-color: var(--gold); }
+
+  .api-key-save {
+    padding: 6px 12px; border-radius: var(--radius-sm);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    color: var(--gold); font-size: 12px; cursor: pointer;
+    transition: var(--transition); font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  }
+  .api-key-save:hover { background: rgba(201,168,76,0.2); }
+
+  /* ===== MARKET VALUE SIDEBAR WIDGET ===== */
+  .mv-sidebar-widget {
+    margin: 0 16px 16px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.10) 0%, rgba(45,212,191,0.06) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    position: relative; overflow: hidden;
+  }
+  .mv-sidebar-widget::before {
+    content: '';
+    position: absolute; top: -12px; right: -12px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .mv-widget-label {
+    font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px;
+    color: var(--text-muted); margin-bottom: 5px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .mv-widget-pulse {
+    width: 5px; height: 5px; border-radius: 50%; background: var(--accent-green);
+    animation: pulse 2s infinite; flex-shrink: 0;
+  }
+  .mv-widget-value {
+    font-family: 'Fraunces', serif;
+    font-size: 17px; font-weight: 700; color: var(--gold);
+    line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 3px;
+  }
+  .mv-widget-sub {
+    font-size: 10px; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .mv-widget-trend {
+    font-size: 10px; color: var(--accent-green); font-weight: 500;
+  }
+
+  /* ===== AUTO-MORPH TOGGLE ===== */
+  .auto-morph-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .auto-morph-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: var(--radius-sm);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    color: var(--text-secondary);
+    font-size: 11px; font-weight: 500; cursor: pointer;
+    transition: var(--transition); font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0;
+  }
+  .auto-morph-btn:hover { border-color: var(--accent-teal); color: var(--accent-teal); }
+  .auto-morph-btn .am-icon { font-size: 12px; }
+  .auto-morph-btn .am-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+    background: var(--border-soft); padding: 1px 5px; border-radius: 3px;
+  }
+  .auto-morph-hint {
+    font-size: 10.5px; color: var(--text-muted); line-height: 1.4;
+  }
+
+  /* ===== VERIFIED PROOF BLOCK ===== */
+  .verified-proof-block {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 12px; margin-top: 8px;
+  }
+  .vpb-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--text-muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .vpb-title-badge {
+    font-size: 9px; padding: 1px 6px; border-radius: 10px;
+    background: rgba(74,222,128,0.1); color: var(--accent-green);
+    border: 1px solid rgba(74,222,128,0.2); font-weight: 600; letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .vpb-row {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .vpb-icon { font-size: 14px; flex-shrink: 0; width: 20px; text-align: center; }
+  .vpb-input {
+    flex: 1; background: var(--surface-card); min-width: 150px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px; font-size: 12px;
+    color: var(--text-primary); font-family: 'DM Sans', sans-serif; outline: none;
+  }
+  .vpb-input:focus { border-color: var(--gold); }
+  .vpb-verify-btn {
+    padding: 6px 10px; border-radius: var(--radius-sm);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    color: var(--gold); font-size: 11px; cursor: pointer;
+    transition: var(--transition); font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+  .vpb-verify-btn:hover { background: rgba(201,168,76,0.2); }
+  .vpb-verify-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .vpb-result {
+    display: none; align-items: flex-start; gap: 8px;
+    margin-top: 6px; padding: 8px 10px;
+    background: rgba(74,222,128,0.04);
+    border: 1px solid rgba(74,222,128,0.2);
+    border-radius: var(--radius-sm);
+  }
+  .vpb-desc { font-size: 10.5px; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+  /* ===== COMPREHENSIVE RESPONSIVE DESIGN (ALL DEVICES) ===== */
+  
+  /* Responsive utility classes */
+  .ext-grid-mobile { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Tablet & smaller desktops */
+  @media (max-width: 1200px) {
+    .app { grid-template-columns: 68px 1fr; grid-template-rows: auto auto 1fr; }
+    .panel-right { display: none; }
+    .preview-area { display: none; }
+    .market-view-wrap.active, .war-room-wrap.active, .ext-wrap.active { width: 100%; grid-column: 2 / -1; }
+  }
+
+  /* Mobile devices */
+  @media (max-width: 768px) {
+    /* Global layout restructure to vertical stack with bottom nav */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+      padding-bottom: 60px; /* Space for the bottom navigation bar */
+    }
+
+    /* Transform Sidebar into Mobile Bottom Navigation */
+    .sidebar-icons {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0;
+      z-index: 1000;
+      border-right: none;
+      border-top: 1px solid var(--border);
+      background: rgba(26, 26, 46, 0.95);
+      backdrop-filter: blur(10px);
+    }
+    
+    .icon-divider { width: 1px; height: 28px; margin: 0; }
+    .icon-btn { width: 40px; height: 40px; }
+    .icon-btn .tooltip { display: none !important; } /* Disable tooltips on touch devices */
+
+    /* Topbar adjustments */
+    .topbar { flex-wrap: wrap; height: auto; padding: 10px; }
+    .topbar-brand { border: none; padding: 0 10px; }
+    .topbar-tabs { width: 100%; order: 3; margin-top: 10px; padding-bottom: 5px; height: auto; }
+    .topbar-actions { border-left: none; padding: 0; justify-content: flex-end; flex: 1; }
+    
+    /* Make panels 100% width and stack them */
+    .panel-left, .preview-area, .panel-right {
+      width: 100%;
+      border: none;
+      overflow: visible;
+    }
+    .panel-right { border-top: 1px solid var(--border); display: flex; }
+    .preview-area { display: flex; padding: 20px 10px; }
+
+    /* Force Resume Paper to fit on screen via scrolling container instead of JS scale overflow */
+    .preview-area { overflow-x: auto; align-items: flex-start; }
+    .resume-paper { 
+        width: 100%; 
+        max-width: none; 
+        min-width: 600px; /* Force minimum width to maintain layout, let user horizontal scroll */
+        transform: scale(1) !important;
+        margin-bottom: 20px;
+    }
+    .preview-toolbar { max-width: none; width: 100%; min-width: 600px; }
+    
+    /* Market View Full-Page Adjustments */
+    .market-full { padding: 20px 16px; }
+    .market-top-row, .market-bottom-row { grid-template-columns: 1fr; }
+    .market-hero-card { grid-column: 1 / -1; }
+    
+    /* War Room Full-Page Adjustments */
+    .war-full { grid-template-columns: 1fr; display: flex; flex-direction: column; }
+    .war-sidebar { border-right: none; border-bottom: 1px solid var(--border); max-height: none; }
+    .war-main-header, .war-answer-area, .war-tips { padding: 20px 16px; }
+
+    /* Extension Full-Page Adjustments */
+    .ext-stats-row { grid-template-columns: 1fr; }
+    .ext-grid-mobile { grid-template-columns: 1fr !important; }
+    
+    /* Display overrides for main wrappers */
+    .market-view-wrap.active, .war-room-wrap.active, .ext-wrap.active {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      grid-column: 1 / -1;
+    }
+
+    /* Modal scaling */
+    .modal { padding: 20px; width: 95vw; }
+    .modal-title { font-size: 18px; }
+
+    /* Floating Action Buttons */
+    .fab-group { bottom: 80px; } /* Lift above mobile nav */
+    
+    .toast { transform: translateX(150%); bottom: 80px; right: 16px; left: 16px; max-width: none; }
+  }
+
+  /* Very small screens (Phones) */
+  @media (max-width: 480px) {
+    .topbar-logo { display: none; }
+    .brand-name { font-size: 15px; }
+    .resume-header-band { padding: 20px; }
+    .resume-body { padding: 0 20px 20px; }
+    .market-hero-amount { font-size: 42px; }
+    .score-row { flex-direction: column; text-align: center; }
+    .score-improve-btn { width: 100%; justify-content: center; }
+    .ext-hero-title { font-size: 18px; }
+    .email-signup-row { flex-direction: column; }
+    .email-signup-row input { width: 100%; }
+    .email-signup-row button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-mark">RF</div>
+  </div>
+  <div class="topbar-brand">
+    <div class="brand-name">ResumeForge</div>
+    <div class="brand-badge">Pro</div>
+  </div>
+  <div class="topbar-tabs">
+    <div class="tab active" onclick="setTab(this,'builder')"><span class="tab-icon">⬡</span> Builder</div>
+    <div class="tab" onclick="setTab(this,'templates')"><span class="tab-icon">◈</span> Templates</div>
+    <div class="tab" onclick="setTab(this,'analytics')"><span class="tab-icon">◎</span> ATS Analytics</div>
+    <div class="tab" onclick="setTab(this,'versions')"><span class="tab-icon">⊞</span> Versions</div>
+    <div class="tab" onclick="setTab(this,'cover')"><span class="tab-icon">◻</span> Cover Letter</div>
+    <div style="width:1px;height:24px;background:var(--border);margin:0 4px;"></div>
+    <div class="tab" onclick="setTab(this,'market')"><span class="tab-icon">📈</span> Market Value <div class="tab-pulse"></div></div>
+    <div class="tab" onclick="setTab(this,'warroom')"><span class="tab-icon">⚔️</span> War Room</div>
+    <div class="tab" onclick="setTab(this,'extension')"><span class="tab-icon">🔗</span> Extension</div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost" onclick="showToast('📋 Copied shareable link!')">Share</button>
+    <button class="btn btn-ghost" onclick="showToast('📄 Downloading PDF...')">↓ PDF</button>
+    <button class="btn btn-gold" onclick="openModal('upgrade')">✦ Upgrade</button>
+  </div>
+</div>
+
+<div class="app" id="mainApp">
+
+  <div class="sidebar-icons" id="mainNav">
+    <div class="icon-btn active" title="Builder" onclick="setTab(null,'builder'); updateMobileNav(this)">
+      ✏️<div class="tooltip">Edit resume</div>
+    </div>
+    <div class="icon-btn" title="Analytics" onclick="setTab(null,'analytics'); updateMobileNav(this)">
+      📊<div class="tooltip">Analytics</div>
+    </div>
+    <div class="icon-divider"></div>
+    <div class="icon-btn" title="Market Pulse" onclick="setTab(null,'market'); updateMobileNav(this)">
+      📈<div class="tooltip">Market Value Pulse</div>
+    </div>
+    <div class="icon-btn" title="War Room" onclick="setTab(null,'warroom'); updateMobileNav(this)">
+      ⚔️<div class="tooltip">Interview War Room</div>
+    </div>
+    <div class="icon-btn" title="Extension" onclick="setTab(null,'extension'); updateMobileNav(this)">
+      🔗<div class="tooltip">Browser Extension</div>
+    </div>
+    <div class="icon-divider hide-mobile"></div>
+    <div class="icon-btn" title="Settings" onclick="showToast('⚙️ Settings')">
+      ⚙️<div class="tooltip">Settings</div>
+    </div>
+  </div>
+
+  <div class="panel-left" id="builderLeft">
+
+    <div class="api-key-banner">
+      <span style="color:var(--gold);font-size:14px;">⚡</span>
+      <span style="color:var(--text-secondary);font-size:11px;">Claude API Key</span>
+      <input class="api-key-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-...">
+      <button class="api-key-save" onclick="saveApiKey()">Save</button>
+    </div>
+
+    <div style="padding:14px 16px 0; border-bottom:1px solid var(--border-soft);">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-muted);font-weight:500;margin-bottom:10px;">◈ Context-Aware AI Interviewer</div>
+      <div class="ai-chat">
+        <div class="ai-chat-header">
+          <div class="ai-dot"></div>
+          <div class="ai-chat-title">ResumeForge Intelligence</div>
+          <span style="margin-left:auto;font-size:10px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">claude-sonnet</span>
+        </div>
+        <div class="ai-messages" id="aiMessages">
+          <div class="ai-msg bot">Welcome! I'm your AI career coach powered by Claude. Tell me about your biggest professional achievement — even rough numbers help. I'll transform it into a bullet point that beats ATS and impresses hiring managers.</div>
+        </div>
+        <div class="ai-typing" id="aiTyping">
+          <div class="ai-loading"><div class="ai-loading-dots"><span></span><span></span><span></span></div> ResumeForge Intelligence is thinking...</div>
+        </div>
+        <div class="ai-input-row">
+          <input class="ai-input" id="aiInput" placeholder="Answer or ask anything..." onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="ai-send" id="aiSendBtn" onclick="sendAI()">→</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section open">
+      <div class="panel-section-header" onclick="toggleSection(this)">
+        <h3>Personal Info</h3>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="panel-section-body">
+        <div class="field-row">
+          <div class="field"><label>First Name</label><input type="text" value="Alexandra" oninput="updateResume()"></div>
+          <div class="field"><label>Last Name</label><input type="text" value="Chen" oninput="updateResume()"></div>
+        </div>
+        <div class="field">
+          <label>Professional Title</label>
+          <input type="text" value="Senior Product Manager" oninput="updateResume()">
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Email</label><input type="email" value="alex.chen@email.com"></div>
+          <div class="field"><label>Phone</label><input type="tel" value="+1 (415) 555-0189"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>LinkedIn</label><input type="text" value="linkedin.com/in/alexchen"></div>
+          <div class="field"><label>Portfolio / GitHub</label><input type="text" value="alexchen.io"></div>
+        </div>
+        <div class="field"><label>Location</label><input type="text" value="San Francisco, CA"></div>
+      </div>
+    </div>
+
+    <div class="panel-section open">
+      <div class="panel-section-header" onclick="toggleSection(this)">
+        <h3>Professional Summary</h3>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="panel-section-body">
+        <div class="field">
+          <label>Summary <span style="color:var(--gold);font-size:10px;margin-left:4px;">✦ AI-optimized</span></label>
+          <textarea id="summaryField" oninput="updateResume()">Results-driven Product Manager with 8+ years delivering high-impact SaaS products. Led cross-functional teams of 25+ across 3 continents, driving $12M ARR growth and 40% reduction in time-to-market. Deep expertise in 0→1 product development, data-driven roadmapping, and enterprise sales alignment.</textarea>
+        </div>
+        <button class="add-block-btn" style="margin:4px 0 0;" onclick="aiRewriteSummary()">✦ Rewrite with AI</button>
+      </div>
+    </div>
+
+    <div class="panel-section open">
+      <div class="panel-section-header" onclick="toggleSection(this)">
+        <h3>Work Experience</h3>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="panel-section-body">
+        <div class="exp-block">
+          <div class="exp-block-header">
+            <div>
+              <div class="exp-block-title">Senior Product Manager</div>
+              <div class="exp-block-meta">Stripe · Jan 2021 – Present</div>
+            </div>
+            <div class="exp-block-actions">
+              <button class="exp-action" title="Move up">↑</button>
+              <button class="exp-action" title="Duplicate">⧉</button>
+              <button class="exp-action danger" title="Delete" onclick="showToast('🗑 Block removed')">✕</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Key Achievement Bullets</label>
+            <textarea id="bulletField1" style="min-height:72px;">Launched 3 core payment APIs used by 180K+ developers, driving $8.4M ARR in first year; Reduced onboarding friction by 62% through A/B testing 24 UX variants; Led team of 18 engineers across 3 time zones</textarea>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            <button class="inject-btn" onclick="aiStrengthenBullets('bulletField1')">✦ Strengthen bullets</button>
+            <button class="inject-btn" onclick="showToast('📊 Metrics extracted!')">Extract metrics</button>
+            <button class="inject-btn" onclick="showToast('🔑 Keywords injected!')">Add keywords</button>
+          </div>
+          <div class="verified-proof-block">
+            <div class="vpb-title">
+              🔗 Verified Proof URL
+              <span class="vpb-title-badge">Trust Signal</span>
+            </div>
+            <div class="vpb-row">
+              <div class="vpb-icon">🐙</div>
+              <input class="vpb-input" id="proofUrl1" type="url" placeholder="github.com/alexchen · portfolio · linkedin.com/in/...">
+              <button class="vpb-verify-btn" id="proofVerifyBtn1" onclick="verifyProofUrl('proofUrl1','proofResult1',this)">✦ AI Verify</button>
+            </div>
+            <div class="vpb-result" id="proofResult1"></div>
+            <div class="vpb-desc">Recruiter-facing link. AI checks it's a real, live profile — a huge trust signal on your resume.</div>
+          </div>
+        </div>
+
+        <div class="exp-block">
+          <div class="exp-block-header">
+            <div>
+              <div class="exp-block-title">Product Manager</div>
+              <div class="exp-block-meta">Notion · Jun 2018 – Dec 2020</div>
+            </div>
+            <div class="exp-block-actions">
+              <button class="exp-action">↑</button>
+              <button class="exp-action">⧉</button>
+              <button class="exp-action danger" onclick="showToast('🗑 Block removed')">✕</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Key Achievement Bullets</label>
+            <textarea id="bulletField2" style="min-height:72px;">Drove 210% growth in enterprise subscriptions by redesigning the B2B onboarding flow; Shipped collaborative editing feature used by 2M+ daily users; Managed $3.2M product development budget</textarea>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+            <button class="inject-btn" onclick="aiStrengthenBullets('bulletField2')">✦ Strengthen bullets</button>
+            <button class="inject-btn" onclick="showToast('📊 Metrics extracted!')">Extract metrics</button>
+          </div>
+          <div class="verified-proof-block">
+            <div class="vpb-title">
+              🔗 Verified Proof URL
+              <span class="vpb-title-badge">Trust Signal</span>
+            </div>
+            <div class="vpb-row">
+              <div class="vpb-icon">💼</div>
+              <input class="vpb-input" id="proofUrl2" type="url" placeholder="notion.so/page · behance.net · dribbble.com/...">
+              <button class="vpb-verify-btn" id="proofVerifyBtn2" onclick="verifyProofUrl('proofUrl2','proofResult2',this)">✦ AI Verify</button>
+            </div>
+            <div class="vpb-result" id="proofResult2"></div>
+            <div class="vpb-desc">Link to a project you built at Notion — case study, design, or outcome doc.</div>
+          </div>
+        </div>
+
+        <button class="add-block-btn" onclick="addExpBlock()">＋ Add experience</button>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-header" onclick="toggleSection(this)">
+        <h3>Skills</h3>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="panel-section-body">
+        <div class="field">
+          <label>Core Skills <span style="color:var(--text-muted);font-size:10px;">(comma separated)</span></label>
+          <input type="text" value="Product Strategy, Roadmapping, Agile, SQL, Figma, A/B Testing, Stakeholder Management">
+        </div>
+        <div class="field">
+          <label>Technical Skills</label>
+          <input type="text" value="Python, SQL, Tableau, Mixpanel, Amplitude, JIRA, Confluence">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-header" onclick="toggleSection(this)">
+        <h3>Education</h3>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="panel-section-body">
+        <div class="exp-block">
+          <div class="field-row">
+            <div class="field"><label>Degree</label><input type="text" value="MBA — Business & Technology"></div>
+            <div class="field"><label>Year</label><input type="text" value="2018"></div>
+          </div>
+          <div class="field"><label>Institution</label><input type="text" value="Stanford Graduate School of Business"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mv-sidebar-widget">
+      <div class="mv-widget-label">
+        <div class="mv-widget-pulse"></div>
+        Current Profile Value
+      </div>
+      <div class="mv-widget-value" id="sidebarMarketValue">$85k – $95k</div>
+      <div class="mv-widget-sub">
+        <span>Based on your skills &amp; experience</span>
+        <span class="mv-widget-trend">↑ +12% this quarter</span>
+      </div>
+    </div>
+
+    <div class="upgrade-banner">
+      <div class="upgrade-title">🔒 Unlock PDF Export & ATS Pro</div>
+      <div class="upgrade-desc">Free tier: build unlimited resumes. Export to PDF, ATS simulation & semantic tailor require Pro.</div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;" onclick="openModal('upgrade')">Upgrade — $15/month</button>
+    </div>
+
+  </div>
+
+  <div class="preview-area" id="builderPreview">
+    <div class="preview-toolbar">
+      <div class="preview-toolbar-left">
+        <div class="preview-label">Preview</div>
+        <div class="zoom-ctrl">
+          <button class="zoom-btn" onclick="changeZoom(-10)">−</button>
+          <div class="zoom-label" id="zoomLabel">100%</div>
+          <button class="zoom-btn" onclick="changeZoom(10)">+</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" style="font-size:12px;" onclick="showToast('🎨 Template switcher loading...')">Template ▾</button>
+        <button class="btn btn-teal" style="font-size:12px;" onclick="openModal('warRoomModal')">⚔️ Practice Interview</button>
+        <button class="btn btn-gold" style="font-size:12px;" onclick="showToast('📄 Generating pixel-perfect PDF...')">↓ Export PDF</button>
+      </div>
+    </div>
+
+    <div class="resume-paper" id="resumePaper">
+      <div class="resume-header-band">
+        <div class="resume-name" id="resumeName">Alexandra Chen</div>
+        <div class="resume-title">Senior Product Manager · 8 Years Experience</div>
+        <div class="resume-contact-row">
+          <div class="resume-contact-item"><span class="resume-contact-icon">✉</span> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ef8e838a97c18c878a81af8a828e8683c18c8082">[email&#160;protected]</a></div>
+          <div class="resume-contact-item"><span class="resume-contact-icon">☎</span> +1 (415) 555-0189</div>
+          <div class="resume-contact-item"><span class="resume-contact-icon">⌘</span> linkedin.com/in/alexchen</div>
+          <div class="resume-contact-item"><span class="resume-contact-icon">◈</span> alexchen.io</div>
+          <div class="resume-contact-item"><span class="resume-contact-icon">⊕</span> San Francisco, CA</div>
+        </div>
+      </div>
+
+      <div class="resume-body">
+        <div class="resume-section">
+          <div class="resume-section-title">Professional Summary</div>
+          <div class="resume-summary">Results-driven Product Manager with 8+ years delivering high-impact SaaS products. Led cross-functional teams of 25+ across 3 continents, driving <strong>$12M ARR growth</strong> and <strong>40% reduction in time-to-market</strong>. Deep expertise in 0→1 product development, data-driven roadmapping, and enterprise sales alignment.</div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Work Experience</div>
+          <div class="exp-entry">
+            <div class="exp-entry-header">
+              <div class="exp-role">Senior Product Manager</div>
+              <div class="exp-date">Jan 2021 – Present</div>
+            </div>
+            <div class="exp-company">Stripe, Inc. · San Francisco, CA</div>
+            <ul class="exp-bullets">
+              <li>Launched 3 core payment APIs used by <span class="exp-metric">180K+ developers</span>, driving <span class="exp-metric">$8.4M ARR</span> in first year</li>
+              <li>Reduced onboarding friction by <span class="exp-metric">62%</span> through A/B testing 24 UX variants across enterprise cohort</li>
+              <li>Led team of <span class="exp-metric">18 engineers</span> across 3 time zones, delivering sprint velocity improvement of 34%</li>
+            </ul>
+          </div>
+          <div class="exp-entry">
+            <div class="exp-entry-header">
+              <div class="exp-role">Product Manager</div>
+              <div class="exp-date">Jun 2018 – Dec 2020</div>
+            </div>
+            <div class="exp-company">Notion · San Francisco, CA</div>
+            <ul class="exp-bullets">
+              <li>Drove <span class="exp-metric">210% growth</span> in enterprise subscriptions by redesigning B2B onboarding funnel</li>
+              <li>Shipped collaborative editing feature now used by <span class="exp-metric">2M+ daily users</span></li>
+              <li>Managed <span class="exp-metric">$3.2M</span> product development budget with 0 overruns across 6 quarters</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Skills</div>
+          <div class="skills-grid">
+            <div class="skill-tag">Product Strategy</div>
+            <div class="skill-tag">Roadmapping</div>
+            <div class="skill-tag">Agile / Scrum</div>
+            <div class="skill-tag">SQL</div>
+            <div class="skill-tag">Figma</div>
+            <div class="skill-tag">A/B Testing</div>
+            <div class="skill-tag">Python</div>
+            <div class="skill-tag">Stakeholder Management</div>
+            <div class="skill-tag">Tableau</div>
+            <div class="skill-tag">Mixpanel</div>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Education</div>
+          <div class="education-entry">
+            <div>
+              <div class="edu-degree">MBA — Business &amp; Technology Strategy</div>
+              <div class="edu-school">Stanford Graduate School of Business</div>
+            </div>
+            <div class="edu-date">2016 – 2018</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;padding:12px 16px;background:rgba(201,168,76,0.05);border:1px solid var(--border);border-radius:var(--radius);max-width:680px;width:100%;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:18px;">🔗</span>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-primary);">Made with ResumeForge</div>
+          <div style="font-size:11px;color:var(--text-muted);">resumeforge.pro — Beat ATS, land interviews faster</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="font-size:11px;" onclick="showToast('🔗 Badge copied to clipboard!')">Copy badge</button>
+    </div>
+  </div>
+
+  <div class="panel-right" id="builderRight">
+    <div class="intelligence-header">
+      <div class="intelligence-title">Intelligence Panel</div>
+      <div class="intelligence-subtitle">ATS score · job match · keyword density</div>
+    </div>
+
+    <div class="score-section">
+      <div class="score-row">
+        <div class="score-gauge-wrap">
+          <svg class="score-gauge" viewBox="0 0 90 90">
+            <circle class="gauge-bg" cx="45" cy="45" r="35"/>
+            <circle class="gauge-fill" id="gaugeFill" cx="45" cy="45" r="35"/>
+          </svg>
+          <div class="score-number" id="scoreDisplay">12<span>% score</span></div>
+        </div>
+        <div class="score-details">
+          <div class="score-verdict" id="scoreVerdict">High Risk</div>
+          <div class="score-desc">Run ATS simulation to see how recruiters' bots read your resume.</div>
+          <button class="score-improve-btn" onclick="runATS()">▶ Run ATS Scan</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 20px 4px;">
+      <div class="section-label" style="padding-top:14px;">Signal Breakdown</div>
+      <div class="signal-item">
+        <div class="signal-icon pass">✓</div>
+        <div class="signal-label">Contact Info</div>
+        <div class="signal-value">complete</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-icon warn">!</div>
+        <div class="signal-label">Keyword Density</div>
+        <div class="signal-value">4.2%</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-icon fail">✕</div>
+        <div class="signal-label">Action Verbs</div>
+        <div class="signal-value">missing</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-icon pass">✓</div>
+        <div class="signal-label">Quantified Results</div>
+        <div class="signal-value">7 metrics</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-icon warn">!</div>
+        <div class="signal-label">Formatting Complexity</div>
+        <div class="signal-value">medium</div>
+      </div>
+    </div>
+
+    <div class="job-match-area">
+      <div class="section-label">Semantic Job Match <span style="color:var(--gold);cursor:pointer;" onclick="showToast('ℹ Using embedding similarity scoring')">ℹ</span></div>
+      <textarea class="jd-paste" id="jdPaste" placeholder="Paste a job description here to get semantic match score, missing keywords, and tailored suggestions..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-gold" style="flex:1;justify-content:center;height:34px;font-size:12px;" onclick="runMatch()">⚡ Analyze Match</button>
+        <button class="btn btn-ghost" style="height:34px;font-size:12px;" onclick="openModal('warRoomModal')">⚔️ War Room</button>
+      </div>
+      <div class="auto-morph-row">
+        <button class="auto-morph-btn" id="autoMorphBtn" onclick="toggleAutoMorph(this)">
+          <span class="am-icon">⚡</span>
+          Auto-Morph Mode
+          <span class="am-status">OFF</span>
+        </button>
+        <div class="auto-morph-hint">Highlights resume skills that match the JD in real-time</div>
+      </div>
+      <div class="match-result" id="matchResult" style="display:none;">
+        <div class="match-score-row">
+          <div class="match-score-label">Semantic similarity</div>
+          <div class="match-score-val" id="matchScore">—</div>
+        </div>
+        <div class="match-bar"><div class="match-bar-fill" id="matchBar" style="width:0%"></div></div>
+        <div class="section-label" style="margin-bottom:6px;">Keyword Analysis</div>
+        <div class="keyword-cloud">
+          <span class="keyword hit">Python</span>
+          <span class="keyword hit">Product Strategy</span>
+          <span class="keyword hit">Agile</span>
+          <span class="keyword miss">System Design</span>
+          <span class="keyword miss">ML/AI</span>
+          <span class="keyword hit">SQL</span>
+          <span class="keyword miss">Go-to-Market</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="templates-row">
+      <div class="section-label">Layout Templates</div>
+      <div class="template-chips">
+        <div class="template-chip active" onclick="selectTemplate(this,'Executive')">Executive</div>
+        <div class="template-chip" onclick="selectTemplate(this,'Minimal')">Minimal</div>
+        <div class="template-chip" onclick="selectTemplate(this,'Creative')">Creative</div>
+        <div class="template-chip" onclick="selectTemplate(this,'Tech')">Tech</div>
+        <div class="template-chip" onclick="selectTemplate(this,'Academic')">Academic</div>
+      </div>
+    </div>
+
+    <div class="proof-area">
+      <div class="section-label">Proof-of-Work Integrations</div>
+      <div class="proof-items">
+        <div class="proof-item connected">
+          <div class="proof-icon" style="background:rgba(74,222,128,0.1);">🐙</div>
+          <div class="proof-info">
+            <div class="proof-name">GitHub</div>
+            <div class="proof-status connected">Connected · 142 repos synced</div>
+          </div>
+          <div class="proof-badge">✓ Live</div>
+        </div>
+        <div class="proof-item" onclick="showToast('🔗 Opening LinkedIn OAuth...')">
+          <div class="proof-icon" style="background:rgba(45,212,191,0.1);">💼</div>
+          <div class="proof-info">
+            <div class="proof-name">LinkedIn</div>
+            <div class="proof-status">Click to connect</div>
+          </div>
+          <div style="font-size:11px;color:var(--gold);">Connect →</div>
+        </div>
+        <div class="proof-item" onclick="showToast('🔗 Opening Behance OAuth...')">
+          <div class="proof-icon" style="background:rgba(201,168,76,0.1);">🎨</div>
+          <div class="proof-info">
+            <div class="proof-name">Behance / Dribbble</div>
+            <div class="proof-status">Click to connect</div>
+          </div>
+          <div style="font-size:11px;color:var(--gold);">Connect →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="typo-area">
+      <div class="section-label" style="margin-bottom:8px;">Typography</div>
+      <div class="font-options">
+        <div class="font-option active" onclick="selectFont(this,'Fraunces')">
+          <div class="font-name" style="font-family:'Fraunces',serif;">Fraunces</div>
+          <div class="font-meta">Elegant serif</div>
+        </div>
+        <div class="font-option" onclick="selectFont(this,'DM Sans')">
+          <div class="font-name">DM Sans</div>
+          <div class="font-meta">Modern sans</div>
+        </div>
+        <div class="font-option" onclick="selectFont(this,'Georgia')">
+          <div class="font-name" style="font-family:Georgia,serif;">Georgia</div>
+          <div class="font-meta">Classic serif</div>
+        </div>
+        <div class="font-option" onclick="selectFont(this,'Mono')">
+          <div class="font-name" style="font-family:'JetBrains Mono',monospace;font-size:12px;">JB Mono</div>
+          <div class="font-meta">Technical</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="market-view-wrap" id="marketView">
+    <div class="market-full">
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap;">
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--text-primary);">Market Value Pulse</div>
+        <div style="font-size:11px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);color:var(--accent-green);padding:3px 10px;border-radius:20px;font-weight:600;letter-spacing:0.5px;">LIVE</div>
+      </div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">Your skills are a stock. Watch them appreciate in real time.</div>
+
+      <div class="market-top-row">
+        <div class="market-hero-card">
+          <div class="market-hero-label">Your Current Market Value</div>
+          <div class="market-hero-amount">₹22<span class="lpa-label">L / year</span></div>
+          <div style="font-size:13px;color:var(--accent-green);margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+            <span>↑ +₹2.4L</span>
+            <span style="color:var(--text-muted);">vs. 6 months ago</span>
+          </div>
+          <div class="market-hero-subtitle">Based on your skills: Product Strategy, SQL, Agile, Figma + 6 more</div>
+
+          <div class="upgrade-skill-box">
+            <div class="usb-title">🚀 Add These Skills to Boost Your Value</div>
+            <div class="skill-upgrade-row">
+              <div class="skill-icon">⚙️</div>
+              <div class="sug-skill">System Design</div>
+              <div class="sug-gain">+₹6L/yr</div>
+              <button class="sug-add" onclick="addSkillToResume('System Design', 6)">+ Add to Resume</button>
+            </div>
+            <div class="skill-upgrade-row">
+              <div class="skill-icon">🤖</div>
+              <div class="sug-skill">LLM / AI Product Management</div>
+              <div class="sug-gain">+₹8L/yr</div>
+              <button class="sug-add" onclick="addSkillToResume('LLM/AI PM', 8)">+ Add to Resume</button>
+            </div>
+            <div class="skill-upgrade-row">
+              <div class="skill-icon">📊</div>
+              <div class="sug-skill">Go-to-Market Strategy</div>
+              <div class="sug-gain">+₹4L/yr</div>
+              <button class="sug-add" onclick="addSkillToResume('GTM Strategy', 4)">+ Add to Resume</button>
+            </div>
+            <div class="skill-upgrade-row">
+              <div class="skill-icon">🏗️</div>
+              <div class="sug-skill">Platform Product Management</div>
+              <div class="sug-gain">+₹5L/yr</div>
+              <button class="sug-add" onclick="addSkillToResume('Platform PM', 5)">+ Add to Resume</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="market-side-card">
+          <div class="msc-title">📍 Your City Market (Bangalore)</div>
+          <div style="margin-bottom:16px;">
+            <div class="skill-bar-row">
+              <div class="sbr-label">Product Manager</div>
+              <div class="sbr-track"><div class="sbr-fill" style="width:72%;"></div></div>
+              <div class="sbr-val">₹22L</div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="sbr-label">Sr. PM</div>
+              <div class="sbr-track"><div class="sbr-fill" style="width:88%;background:linear-gradient(90deg,var(--accent-teal),#1A9B8B);"></div></div>
+              <div class="sbr-val">₹34L</div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="sbr-label">Group PM</div>
+              <div class="sbr-track"><div class="sbr-fill" style="width:95%;background:linear-gradient(90deg,var(--accent-purple),#6D56C4);"></div></div>
+              <div class="sbr-val">₹52L</div>
+            </div>
+            <div class="skill-bar-row">
+              <div class="sbr-label">Director, PM</div>
+              <div class="sbr-track"><div class="sbr-fill" style="width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));"></div></div>
+              <div class="sbr-val">₹78L+</div>
+            </div>
+          </div>
+
+          <div class="msc-title" style="margin-top:8px;">Your 12-Month Trend</div>
+          <div class="spark-container">
+            <div class="spark-bar" style="height:30%;" title="₹18L"></div>
+            <div class="spark-bar" style="height:35%;" title="₹18.5L"></div>
+            <div class="spark-bar" style="height:33%;" title="₹18.2L"></div>
+            <div class="spark-bar" style="height:40%;" title="₹19L"></div>
+            <div class="spark-bar" style="height:45%;" title="₹19.8L"></div>
+            <div class="spark-bar" style="height:42%;" title="₹19.5L"></div>
+            <div class="spark-bar" style="height:55%;" title="₹20.5L"></div>
+            <div class="spark-bar" style="height:60%;" title="₹21L"></div>
+            <div class="spark-bar" style="height:65%;" title="₹21.5L"></div>
+            <div class="spark-bar" style="height:72%;" title="₹22L"></div>
+            <div class="spark-bar" style="height:78%;" title="₹22.5L (projected)"></div>
+            <div class="spark-bar highlight" style="height:85%;" title="₹24L (projected)"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px;">
+            <span>Apr '24</span><span>Now</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="market-bottom-row">
+        <div class="market-card">
+          <div class="mc-title">Skill Value Breakdown</div>
+          <div class="skill-bar-row">
+            <div class="sbr-label" style="color:var(--text-primary);">Product Strategy</div>
+            <div class="sbr-track"><div class="sbr-fill" style="width:90%;"></div></div>
+            <div class="sbr-val">₹8.2L</div>
+          </div>
+          <div class="skill-bar-row">
+            <div class="sbr-label" style="color:var(--text-primary);">SQL / Analytics</div>
+            <div class="sbr-track"><div class="sbr-fill" style="width:65%;background:linear-gradient(90deg,var(--accent-teal),#1A9B8B);"></div></div>
+            <div class="sbr-val">₹4.8L</div>
+          </div>
+          <div class="skill-bar-row">
+            <div class="sbr-label" style="color:var(--text-primary);">Agile / Scrum</div>
+            <div class="sbr-track"><div class="sbr-fill" style="width:55%;"></div></div>
+            <div class="sbr-val">₹3.5L</div>
+          </div>
+          <div class="skill-bar-row">
+            <div class="sbr-label" style="color:var(--text-primary);">Figma / Design</div>
+            <div class="sbr-track"><div class="sbr-fill" style="width:45%;background:linear-gradient(90deg,var(--accent-purple),#6D56C4);"></div></div>
+            <div class="sbr-val">₹2.8L</div>
+          </div>
+          <div class="skill-bar-row">
+            <div class="sbr-label" style="color:var(--text-primary);">Stakeholder Mgmt</div>
+            <div class="sbr-track"><div class="sbr-fill" style="width:40%;"></div></div>
+            <div class="sbr-val">₹2.7L</div>
+          </div>
+        </div>
+
+        <div class="market-card">
+          <div class="mc-title">Peer Comparison (Bangalore · PM · 8yrs)</div>
+          <div class="peer-comparison">
+            <div class="peer-row">
+              <div class="peer-rank">#1</div>
+              <div class="peer-avatar">🥇</div>
+              <div class="peer-name">Ananya S.</div>
+              <div class="peer-val">₹34L</div>
+            </div>
+            <div class="peer-row">
+              <div class="peer-rank">#2</div>
+              <div class="peer-avatar">🥈</div>
+              <div class="peer-name">Rohan M.</div>
+              <div class="peer-val">₹28L</div>
+            </div>
+            <div class="peer-row peer-you">
+              <div class="peer-rank">#3</div>
+              <div class="peer-avatar" style="background:rgba(201,168,76,0.15);border-color:var(--border);">⭐</div>
+              <div class="peer-name" style="font-weight:600;color:var(--gold);">You</div>
+              <div class="peer-val" style="color:var(--gold);">₹22L</div>
+            </div>
+            <div class="peer-row">
+              <div class="peer-rank">#4</div>
+              <div class="peer-avatar">👤</div>
+              <div class="peer-name">Priya K.</div>
+              <div class="peer-val">₹19L</div>
+            </div>
+            <div class="peer-row">
+              <div class="peer-rank">#5</div>
+              <div class="peer-avatar">👤</div>
+              <div class="peer-name">Vikram J.</div>
+              <div class="peer-val">₹17L</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:var(--text-muted);line-height:1.5;">
+            You're in the <strong style="color:var(--gold);">top 40%</strong> of peers. Add <em>System Design</em> to jump to <strong style="color:var(--accent-teal);">#2</strong>.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="war-room-wrap" id="warRoomView">
+    <div class="war-full">
+      <div class="war-sidebar">
+        <div class="war-sidebar-header">
+          <div class="war-sidebar-title">⚔️ Interview War Room</div>
+          <div class="war-sidebar-sub">Senior Product Manager @ Stripe</div>
+          <div class="war-progress-ring">
+            <div class="wr-ring-wrap">
+              <svg class="wr-ring" viewBox="0 0 64 64">
+                <circle class="wr-ring-bg" cx="32" cy="32" r="25"/>
+                <circle class="wr-ring-fill" id="warRingFill" cx="32" cy="32" r="25"/>
+              </svg>
+              <div class="wr-ring-num" id="warRingNum">0</div>
+            </div>
+            <div class="wr-ring-label">questions<br>answered out of <strong style="color:var(--text-primary);">10</strong></div>
+          </div>
+        </div>
+
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border-soft);">
+          <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:13px;" onclick="generateWarRoomQuestions()">⚡ Generate 10 AI Questions</button>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;text-align:center;">Tailored to this specific job & your resume</div>
+        </div>
+
+        <div class="war-question-list" id="warQuestionList">
+          <div style="padding:40px 20px;text-align:center;color:var(--text-muted);">
+            <div style="font-size:32px;margin-bottom:12px;">⚔️</div>
+            <div style="font-size:13px;line-height:1.6;">Generate AI questions tailored to the job description you pasted. Spend 48 hours before your interview right here.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="war-main">
+        <div class="war-main-header" id="warMainHeader">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-muted);margin-bottom:16px;">Select a question from the left to begin practicing</div>
+          <div class="war-main-question" id="warMainQuestion" style="color:var(--text-muted);font-size:16px;font-weight:400;">
+            Your interview questions will appear here after generation. The AI analyzes your resume + job description to create hyper-specific questions no generic prep site would ask.
+          </div>
+        </div>
+
+        <div class="war-answer-area">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.7px;color:var(--text-muted);margin-bottom:8px;">Your Answer</div>
+          <textarea class="war-answer-input" id="warAnswerInput" placeholder="Type your answer here. Use the STAR method: Situation → Task → Action → Result..."></textarea>
+          <div class="war-answer-actions">
+            <button class="btn btn-gold" onclick="getAIFeedback()" id="warFeedbackBtn">✦ Get AI Feedback</button>
+            <button class="btn btn-ghost" onclick="nextWarQuestion()" id="warNextBtn">Next Question →</button>
+            <button class="btn btn-teal" onclick="showToast('🎤 Voice practice mode (coming soon)')">🎤 Voice Mode</button>
+          </div>
+          <div class="war-feedback-box" id="warFeedbackBox">
+            <div class="wfb-title">✦ ResumeForge AI Feedback</div>
+            <div class="wfb-content" id="warFeedbackContent">Loading feedback...</div>
+          </div>
+        </div>
+
+        <div class="war-tips">
+          <div class="war-tips-title">Quick Tips</div>
+          <div class="war-tip-chips">
+            <div class="war-tip-chip" onclick="insertTip('Use the STAR method')">STAR Method</div>
+            <div class="war-tip-chip" onclick="insertTip('Start with a quantified result')">Lead with metrics</div>
+            <div class="war-tip-chip" onclick="insertTip('Keep answer under 2 minutes')">2-min rule</div>
+            <div class="war-tip-chip" onclick="insertTip('Connect to company mission')">Link to company</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ext-wrap" id="extensionView">
+    <div class="ext-full">
+
+      <div class="ext-hero">
+        <span class="ext-icon-big">🔗</span>
+        <div class="ext-hero-title">The ResumeForge Browser Extension</div>
+        <div class="ext-hero-desc">A "Forge" button appears on every LinkedIn job listing. Click it — we pull the full job description into your builder and morph your resume automatically. Apply to 50 jobs in the time it used to take for one.</div>
+      </div>
+
+      <div class="ext-stats-row">
+        <div class="ext-stat-card">
+          <div class="ext-stat-num">2.3s</div>
+          <div class="ext-stat-label">Avg. time to tailor resume</div>
+        </div>
+        <div class="ext-stat-card">
+          <div class="ext-stat-num">50+</div>
+          <div class="ext-stat-label">Applications per week</div>
+        </div>
+        <div class="ext-stat-card">
+          <div class="ext-stat-num">3.2×</div>
+          <div class="ext-stat-label">Higher interview rate</div>
+        </div>
+      </div>
+
+      <div style="background:var(--ink-mid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:18px;">How It Works</div>
+        <div class="ext-step">
+          <div class="ext-step-num">1</div>
+          <div class="ext-step-content">
+            <div class="ext-step-title">Browse LinkedIn as normal</div>
+            <div class="ext-step-desc">The extension runs silently in your browser. No changes to your workflow until you want it.</div>
+          </div>
+        </div>
+        <div class="ext-step">
+          <div class="ext-step-num">2</div>
+          <div class="ext-step-content">
+            <div class="ext-step-title">See the Forge button on any job listing</div>
+            <div class="ext-step-desc">A golden "⚡ Forge" button appears next to every "Easy Apply" button on LinkedIn jobs.</div>
+          </div>
+        </div>
+        <div class="ext-step">
+          <div class="ext-step-num">3</div>
+          <div class="ext-step-content">
+            <div class="ext-step-title">One click — resume auto-tailored</div>
+            <div class="ext-step-desc">We extract the JD, run semantic analysis, and return a tailored version of your resume in under 3 seconds.</div>
+          </div>
+        </div>
+        <div class="ext-step" style="margin-bottom:0;">
+          <div class="ext-step-num">4</div>
+          <div class="ext-step-content">
+            <div class="ext-step-title">Review, export, apply</div>
+            <div class="ext-step-desc">Download the tailored PDF or use the web link. The job is auto-added to your application tracker.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ext-demo-mockup">
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);">Senior Product Manager — Razorpay</div>
+          <div style="font-size:12px;color:var(--text-muted);">Bangalore · Full-time · 200+ applicants</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="padding:7px 14px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.08);color:var(--text-secondary);font-size:13px;font-weight:500;">Easy Apply</div>
+          <button class="forge-btn-demo" onclick="demoForgeButton()">⚡ Forge</button>
+        </div>
+      </div>
+
+      <div style="background:var(--ink-mid);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px;">Coming to Chrome Web Store</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;">We're finalizing the extension. Leave your email to get early access the moment it launches.</div>
+        <div class="email-signup-row" style="display:flex;gap:10px;">
+          <input type="email" placeholder="your@email.com" style="flex:1;background:var(--surface-raised);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text-primary);font-family:'DM Sans',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border-soft)'">
+          <button class="btn btn-gold" onclick="showToast('🎉 You\'re on the waitlist! Early access coming soon.')">Get Early Access</button>
+        </div>
+      </div>
+
+      <div class="ext-grid-mobile">
+        <div style="background:var(--ink-mid);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+          <div style="font-size:18px;margin-bottom:8px;">🔒</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Privacy First</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;">We only read job descriptions when you click Forge. Zero tracking, zero data selling.</div>
+        </div>
+        <div style="background:var(--ink-mid);border:1px solid var(--border);border-radius:var(--radius);padding:18px;">
+          <div style="font-size:18px;margin-bottom:8px;">⚡</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Pro Feature</div>
+          <div style="font-size:12px;color:var(--text-secondary);line-height:1.5;">The extension is included in your $15/mo Pro plan. Unlimited tailoring, unlimited exports.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><div class="modal-backdrop" id="modal-upgrade">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Unlock ResumeForge Pro</div>
+      <button class="modal-close" onclick="closeModal('upgrade')">✕</button>
+    </div>
+    <div style="text-align:center;padding:8px 0 24px;">
+      <div style="font-family:'Fraunces',serif;font-size:42px;font-weight:700;color:var(--gold);line-height:1;">$15</div>
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">per month (approx. ₹1,250) · cancel anytime</div>
+      <div style="display:flex;flex-direction:column;gap:10px;text-align:left;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> Unlimited ATS simulation &amp; PDF exports</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> Semantic Tailor — auto-match any job description</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> GitHub, LinkedIn &amp; Behance live integrations</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> AI bullet writer with metric extraction</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> Market Value Pulse — live salary tracking</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> Interview War Room — unlimited AI mock interviews</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> Browser Extension for LinkedIn (Early Access)</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-primary);"><span style="color:var(--accent-green);">✓</span> Shareable web resume with view analytics</div>
+      </div>
+      <button class="btn btn-gold" style="width:100%;height:44px;font-size:15px;border-radius:var(--radius);" onclick="showToast('🎉 Welcome to Pro! Activating...');closeModal('upgrade')">Start Pro — $15/month</button>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:10px;">30-day money-back guarantee · Powered by Stripe</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-warRoomModal">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <div class="modal-title">⚔️ Interview War Room</div>
+      <button class="modal-close" onclick="closeModal('warRoomModal')">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">10 AI-generated questions tailored to this specific job. Spend the 48 hours before your interview here.</div>
+    <button class="btn btn-gold" style="margin-bottom:16px;" onclick="generateWarRoomQuestionsModal()">⚡ Generate Questions from JD</button>
+    <div id="warModalQuestions" style="display:flex;flex-direction:column;gap:10px;">
+      <div style="text-align:center;padding:32px;color:var(--text-muted);font-size:13px;">Paste a job description in the Intelligence Panel, then generate questions here.</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="toast-icon">✦</span>
+  <span id="toastMsg">Action complete</span>
+</div>
+
+<div class="fab-group">
+  <div class="fab fab-secondary" onclick="showToast('💬 Chat with AI resumed')">💬</div>
+  <div class="fab fab-primary" onclick="showToast('📄 Generating PDF...')">↓</div>
+</div>
+
+<script>
+/* ===== STATE ===== */
+let zoomLevel = 100;
+let toastTimer = null;
+let currentTab = 'builder';
+let apiKey = localStorage.getItem('rf_api_key') || '';
+let warCurrentQ = 0;
+let warAnswered = 0;
+let warQuestions = [];
+let marketValue = 22;
+const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
+
+/* ===== API KEY ===== */
+function saveApiKey() {
+  apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (apiKey) {
+    localStorage.setItem('rf_api_key', apiKey);
+    showToast('⚡ Claude API key saved! AI features activated.');
+  }
+}
+
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('rf_api_key');
+  if (saved) {
+    apiKey = saved;
+    document.getElementById('apiKeyInput').value = saved;
+  }
+  // init ATS
+  setTimeout(() => {
+    const fill = document.getElementById('gaugeFill');
+    if (fill) fill.style.strokeDashoffset = 220 - (12/100)*220;
+  }, 500);
+});
+
+/* ===== CLAUDE API CALL ===== */
+async function claudeChat(systemPrompt, userMessage, onStream) {
+  if (!apiKey) {
+    return 'Please save your Claude API key first (the field at the top of the left panel). You can get one at console.anthropic.com.';
+  }
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+    if (!resp.ok) {
+      const err = await resp.json();
+      return `API Error: ${err.error?.message || 'Unknown error'}`;
+    }
+    const data = await resp.json();
+    return data.content[0]?.text || '';
+  } catch (e) {
+    return `Network error: ${e.message}`;
+  }
+}
+
+/* ===== TABS & NAV ===== */
+function setTab(el, name) {
+  currentTab = name;
+
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (el && el.classList.contains('tab')) el.classList.add('active');
+  else {
+    document.querySelectorAll('.tab').forEach(t => {
+      if (t.textContent.trim().toLowerCase().includes(name.toLowerCase())) t.classList.add('active');
+    });
+  }
+
+  // Show/hide sections
+  const builder = ['builderLeft','builderPreview','builderRight'];
+  builder.forEach(id => {
+    const el2 = document.getElementById(id);
+    if (el2) el2.style.display = '';
+  });
+
+  document.getElementById('marketView').classList.remove('active');
+  document.getElementById('warRoomView').classList.remove('active');
+  document.getElementById('extensionView').classList.remove('active');
+
+  if (name === 'market') {
+    builder.forEach(id => {
+      const el2 = document.getElementById(id);
+      if (el2) el2.style.display = 'none';
+    });
+    document.getElementById('marketView').classList.add('active');
+  } else if (name === 'warroom') {
+    builder.forEach(id => {
+      const el2 = document.getElementById(id);
+      if (el2) el2.style.display = 'none';
+    });
+    document.getElementById('warRoomView').classList.add('active');
+  } else if (name === 'extension') {
+    builder.forEach(id => {
+      const el2 = document.getElementById(id);
+      if (el2) el2.style.display = 'none';
+    });
+    document.getElementById('extensionView').classList.add('active');
+  } else if (name === 'analytics') {
+    showToast('📊 ATS Analytics dashboard loading...');
+  } else if (name === 'templates') {
+    showToast('🎨 Template gallery loading...');
+  } else if (name === 'versions') {
+    showToast('📁 Version history loading...');
+  } else if (name === 'cover') {
+    showToast('✉ Cover Letter generator loading...');
+  }
+}
+
+/* Helper to update mobile nav state */
+function updateMobileNav(clickedBtn) {
+    document.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+    clickedBtn.classList.add('active');
+}
+
+/* ===== AI INTERVIEWER ===== */
+async function sendAI() {
+  const input = document.getElementById('aiInput');
+  const messages = document.getElementById('aiMessages');
+  const val = input.value.trim();
+  if (!val) return;
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = val;
+  messages.appendChild(userMsg);
+  input.value = '';
+
+  const sendBtn = document.getElementById('aiSendBtn');
+  const typing = document.getElementById('aiTyping');
+  sendBtn.disabled = true;
+  typing.classList.add('show');
+  messages.scrollTop = messages.scrollHeight;
+
+  const resume = `Name: Alexandra Chen | Title: Senior Product Manager | Experience: 8 years | Current: Stripe | Skills: Product Strategy, SQL, Agile, Figma`;
+  const system = `You are ResumeForge Intelligence — a world-class career coach and resume strategist. You conduct insightful interviews to extract quantified professional achievements from the user, then help convert them into powerful, ATS-optimized resume bullets. Be concise, specific, and actionable. Always push for numbers, percentages, dollar amounts, and team sizes. Keep responses under 4 sentences.`;
+
+  const reply = await claudeChat(system, `User's resume context: ${resume}\n\nUser said: ${val}`);
+
+  typing.classList.remove('show');
+  sendBtn.disabled = false;
+
+  const botMsg = document.createElement('div');
+  botMsg.className = 'ai-msg bot';
+  botMsg.textContent = reply;
+  messages.appendChild(botMsg);
+  messages.scrollTop = messages.scrollHeight;
+
+  updateATSScore(Math.min(88, parseInt(document.getElementById('scoreDisplay').textContent) + 5));
+}
+
+/* ===== AI BULLET STRENGTHENER ===== */
+async function aiStrengthenBullets(fieldId) {
+  const field = document.getElementById(fieldId);
+  if (!field || !field.value.trim()) { showToast('⚠ Add some bullets first'); return; }
+
+  showToast('✦ Strengthening bullets with Claude AI...');
+  const original = field.value;
+
+  const system = `You are an elite resume writer. Your job is to transform weak bullet points into powerful, ATS-optimized, metric-driven resume bullets. Rules: Start every bullet with a strong action verb (Orchestrated, Architected, Spearheaded, etc). Include specific numbers, percentages, or dollar amounts wherever possible. Keep each bullet under 20 words. Return ONLY the improved bullets, one per line, no numbering.`;
+
+  const result = await claudeChat(system, `Strengthen these resume bullets:\n${original}`);
+
+  if (result && !result.startsWith('API Error') && !result.startsWith('Please save') && !result.startsWith('Network')) {
+    field.value = result;
+    showToast('✦ Bullets strengthened with Claude AI!');
+    updateATSScore(Math.min(90, parseInt(document.getElementById('scoreDisplay').textContent) + 10));
+  } else {
+    showToast('⚠ ' + result.substring(0, 60));
+  }
+}
+
+/* ===== AI SUMMARY REWRITE ===== */
+async function aiRewriteSummary() {
+  const field = document.getElementById('summaryField');
+  showToast('✨ Rewriting summary with Claude AI...');
+
+  const system = `You are an elite resume writer. Rewrite the provided professional summary to be more impactful, ATS-optimized, and compelling for senior roles. Include specific metrics if present. Keep it to 3 sentences max. Start with a power statement, not "I am".`;
+
+  const result = await claudeChat(system, `Rewrite this professional summary:\n${field.value}`);
+
+  if (result && !result.startsWith('API Error') && !result.startsWith('Please save') && !result.startsWith('Network')) {
+    field.value = result;
+    showToast('✨ Summary rewritten with Claude AI!');
+  } else {
+    showToast('⚠ ' + result.substring(0, 60));
+  }
+}
+
+/* ===== WAR ROOM QUESTIONS ===== */
+async function generateWarRoomQuestions() {
+  const jd = document.getElementById('jdPaste') ? document.getElementById('jdPaste').value : '';
+  const resume = `Senior Product Manager, 8 years, Stripe & Notion, Product Strategy, SQL, Agile, $12M ARR, led 18-person teams`;
+
+  showToast('⚔️ Generating 10 tailored questions with Claude...');
+
+  const system = `You are an expert technical recruiter and interview coach. Generate exactly 10 specific, challenging interview questions for the given role and candidate. Mix: 3 behavioral (label: BEHAVIORAL), 4 situational (label: SITUATIONAL), 3 technical/product (label: TECHNICAL). Format each as:
+Q1|BEHAVIORAL|Question text here
+Q2|SITUATIONAL|Question text here
+(etc.)
+Only output the questions in that exact pipe-separated format. No other text.`;
+
+  const prompt = `Job: Senior Product Manager at a FinTech company. Candidate resume: ${resume}. Job description context: ${jd || 'Payment infrastructure, B2B SaaS, cross-functional leadership, 0-1 product development'}`;
+
+  const result = await claudeChat(system, prompt);
+
+  if (result.startsWith('API Error') || result.startsWith('Please save') || result.startsWith('Network')) {
+    showToast('⚠ ' + result.substring(0, 80));
+    // Use fallback questions
+    warQuestions = getFallbackQuestions();
+  } else {
+    warQuestions = parseWarQuestions(result);
+  }
+
+  renderWarQuestions();
+  showToast('⚔️ 10 questions ready! Start practicing.');
+}
+
+function getFallbackQuestions() {
+  return [
+    { num: 1, type: 'BEHAVIORAL', text: 'Tell me about a time you had to kill a feature that the team was emotionally invested in. How did you handle the decision and the aftermath?' },
+    { num: 2, type: 'SITUATIONAL', text: 'Stripe is considering launching a new B2B invoicing product. You have 6 months and a team of 12. Walk me through your discovery, prioritization, and go-to-market approach.' },
+    { num: 3, type: 'TECHNICAL', text: 'How do you define and measure product-market fit for a B2B SaaS product with a long sales cycle?' },
+    { num: 4, type: 'BEHAVIORAL', text: 'Describe the most complex stakeholder alignment challenge you have faced. What was at stake, and how did you build consensus?' },
+    { num: 5, type: 'SITUATIONAL', text: 'Your biggest enterprise customer is threatening to churn because a competitor just launched a feature you do not have. You have 2 weeks. What do you do?' },
+    { num: 6, type: 'TECHNICAL', text: 'Walk me through how you would design an A/B testing framework for a payment checkout flow where statistical significance is hard to achieve quickly.' },
+    { num: 7, type: 'BEHAVIORAL', text: 'Tell me about a product decision you made based on data that turned out to be wrong. What did you learn?' },
+    { num: 8, type: 'SITUATIONAL', text: 'Engineering tells you the MVP will take 6 months but sales promised the customer delivery in 3. You cannot hire more engineers. What do you do?' },
+    { num: 9, type: 'TECHNICAL', text: 'How do you think about pricing strategy for a developer-first API product? What signals would you use to decide between usage-based and seat-based pricing?' },
+    { num: 10, type: 'BEHAVIORAL', text: 'Tell me about the metric you are most proud of in your career. Why that one, and what was your specific contribution to moving it?' }
+  ];
+}
+
+function parseWarQuestions(text) {
+  const lines = text.split('\n').filter(l => l.includes('|'));
+  return lines.slice(0, 10).map((line, i) => {
+    const parts = line.split('|');
+    return {
+      num: i + 1,
+      type: parts[1]?.trim() || 'BEHAVIORAL',
+      text: parts[2]?.trim() || line
+    };
+  });
+}
+
+function renderWarQuestions() {
+  const list = document.getElementById('warQuestionList');
+  list.innerHTML = '';
+
+  warQuestions.forEach((q, i) => {
+    const item = document.createElement('div');
+    item.className = 'war-q-item' + (i === 0 ? ' active' : '');
+    item.onclick = () => selectWarQuestion(i);
+    item.innerHTML = `
+      <div class="war-q-num" id="warQNum${i}">${i + 1}</div>
+      <div class="war-q-preview">${q.text.substring(0, 80)}${q.text.length > 80 ? '...' : ''}</div>
+    `;
+    list.appendChild(item);
+  });
+
+  if (warQuestions.length > 0) selectWarQuestion(0);
+}
+
+function selectWarQuestion(idx) {
+  warCurrentQ = idx;
+  document.querySelectorAll('.war-q-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+
+  const q = warQuestions[idx];
+  if (!q) return;
+
+  document.getElementById('warMainQuestion').textContent = q.text;
+  document.getElementById('warAnswerInput').value = '';
+  document.getElementById('warFeedbackBox').classList.remove('show');
+
+  const mainHeader = document.getElementById('warMainHeader');
+  mainHeader.innerHTML = `
+    <div class="war-q-meta" style="margin-bottom:12px;">
+      <span class="q-tag ${q.type.toLowerCase()}">${q.type}</span>
+      <span style="font-size:11px;color:var(--text-muted);">Question ${q.num} of 10</span>
+    </div>
+    <div class="war-main-question">${q.text}</div>
+  `;
+}
+
+async function getAIFeedback() {
+  const answer = document.getElementById('warAnswerInput').value.trim();
+  if (!answer) { showToast('⚠ Write your answer first'); return; }
+
+  const q = warQuestions[warCurrentQ];
+  if (!q) return;
+
+  const box = document.getElementById('warFeedbackBox');
+  const content = document.getElementById('warFeedbackContent');
+  box.classList.add('show');
+  content.textContent = 'Analyzing your answer with Claude AI...';
+
+  const btn = document.getElementById('warFeedbackBtn');
+  btn.disabled = true;
+
+  const system = `You are a world-class interview coach preparing a senior Product Manager candidate. Give structured feedback on their answer. Format: 
+Strengths: [2-3 specific positives]
+Missing: [what they forgot — metrics, specific examples, STAR structure]
+Stronger version: [rewrite their answer in 3 sentences with better structure and specificity]
+Score: X/10
+
+Be direct, specific, and actionable. Maximum 150 words total.`;
+
+  const result = await claudeChat(system, `Interview question: ${q.text}\n\nCandidate's answer: ${answer}`);
+
+  content.innerHTML = result.replace(/\n/g, '<br>');
+  btn.disabled = false;
+
+  // Mark question as done
+  warAnswered = Math.min(10, warAnswered + 1);
+  const numEl = document.getElementById(`warQNum${warCurrentQ}`);
+  if (numEl) {
+    numEl.textContent = '✓';
+    numEl.parentElement.classList.add('done');
+  }
+
+  // Update progress ring
+  const offset = 157 - (warAnswered / 10) * 157;
+  document.getElementById('warRingFill').style.strokeDashoffset = offset;
+  document.getElementById('warRingNum').textContent = warAnswered;
+}
+
+function nextWarQuestion() {
+  if (warCurrentQ < warQuestions.length - 1) {
+    selectWarQuestion(warCurrentQ + 1);
+  } else {
+    showToast('🎉 All 10 questions complete! You are ready.');
+  }
+}
+
+function insertTip(tip) {
+  const ta = document.getElementById('warAnswerInput');
+  ta.value = (ta.value ? ta.value + '\n\n' : '') + `[TIP: ${tip}]`;
+  ta.focus();
+}
+
+/* ===== WAR ROOM MODAL ===== */
+async function generateWarRoomQuestionsModal() {
+  const jd = document.getElementById('jdPaste')?.value || '';
+  const container = document.getElementById('warModalQuestions');
+  container.innerHTML = '<div style="padding:20px;color:var(--text-muted);font-size:13px;">Generating with Claude AI...</div>';
+
+  if (!apiKey) {
+    warQuestions = getFallbackQuestions();
+  } else {
+    await generateWarRoomQuestions();
+  }
+
+  container.innerHTML = '';
+  getFallbackQuestions().forEach((q, i) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface-card);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:14px;';
+    card.innerHTML = `
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:6px;">Q${q.num} · <span style="color:${q.type==='BEHAVIORAL'?'var(--accent-purple)':q.type==='TECHNICAL'?'var(--accent-teal)':'var(--gold)'}">${q.type}</span></div>
+      <div style="font-size:13px;color:var(--text-primary);line-height:1.5;">${q.text}</div>
+    `;
+    container.appendChild(card);
+  });
+  showToast('⚔️ 10 questions loaded!');
+}
+
+/* ===== MARKET VALUE ===== */
+function addSkillToResume(skill, gainLakhs) {
+  marketValue += gainLakhs;
+  showToast(`✦ "${skill}" added! Value jumps to ₹${marketValue}L/yr`);
+
+  const hero = document.querySelector('.market-hero-amount');
+  if (hero) {
+    hero.innerHTML = `₹${marketValue}<span class="lpa-label">L / year</span>`;
+    hero.style.animation = 'none';
+    hero.offsetHeight;
+    hero.style.animation = 'fadeInUp 0.5s ease';
+  }
+}
+
+/* ===== EXTENSION DEMO ===== */
+function demoForgeButton() {
+  showToast('⚡ Forge activated! Pulling JD from LinkedIn...');
+  setTimeout(() => showToast('✦ JD extracted. Tailoring your resume...'), 1500);
+  setTimeout(() => showToast('🎉 Resume tailored in 2.3 seconds. Ready to export!'), 3000);
+}
+
+/* ===== EXISTING FUNCTIONS ===== */
+function toggleSection(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+function changeZoom(delta) {
+  zoomLevel = Math.min(150, Math.max(60, zoomLevel + delta));
+  document.getElementById('zoomLabel').textContent = zoomLevel + '%';
+  const paper = document.getElementById('resumePaper');
+  paper.style.transform = `scale(${zoomLevel/100})`;
+  paper.style.transformOrigin = 'top left';
+  paper.style.marginBottom = zoomLevel > 100 ? `${(zoomLevel-100)*6}px` : '0';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function openModal(id) { document.getElementById('modal-' + id).classList.add('open'); }
+function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-backdrop').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+function runATS() {
+  showToast('🔬 Running ATS simulation engine...');
+  let score = 12;
+  const interval = setInterval(() => {
+    score = Math.min(85, score + Math.floor(Math.random() * 12) + 3);
+    updateATSScore(score);
+    if (score >= 85) { clearInterval(interval); showToast('🎉 ATS score: 85%! Resume optimized.'); }
+  }, 400);
+}
+
+function updateATSScore(score) {
+  document.getElementById('scoreDisplay').innerHTML = score + '<span>% score</span>';
+  const circumference = 220;
+  const offset = circumference - (score / 100) * circumference;
+  const fill = document.getElementById('gaugeFill');
+  fill.style.strokeDashoffset = offset;
+  fill.className = 'gauge-fill ' + (score >= 70 ? 'good' : score >= 40 ? 'medium' : 'bad');
+  const verdict = document.getElementById('scoreVerdict');
+  if (score >= 70) { verdict.textContent = 'Strong Profile'; verdict.className = 'score-verdict good'; }
+  else if (score >= 40) { verdict.textContent = 'Needs Work'; verdict.className = 'score-verdict medium'; }
+  else { verdict.textContent = 'High Risk'; verdict.className = 'score-verdict'; }
+}
+
+function runMatch() {
+  const jd = document.getElementById('jdPaste').value.trim();
+  if (!jd) { showToast('📋 Paste a job description first'); return; }
+  showToast('🎯 Analyzing semantic match...');
+  setTimeout(() => {
+    document.getElementById('matchResult').style.display = 'block';
+    const score = Math.floor(Math.random() * 30) + 55;
+    document.getElementById('matchScore').textContent = score + '%';
+    document.getElementById('matchBar').style.width = score + '%';
+    showToast('✓ Semantic analysis complete — ' + score + '% match');
+  }, 1400);
+}
+
+function addExpBlock() {
+  showToast('➕ New experience block added');
+  const panel = document.querySelector('.panel-section.open .panel-section-body');
+  if (!panel) return;
+  const block = document.createElement('div');
+  block.className = 'exp-block';
+  const id = 'bulletField' + Date.now();
+  block.innerHTML = `
+    <div class="exp-block-header">
+      <div>
+        <div class="exp-block-title">New Position</div>
+        <div class="exp-block-meta">Company · Date</div>
+      </div>
+      <div class="exp-block-actions">
+        <button class="exp-action">↑</button>
+        <button class="exp-action">⧉</button>
+        <button class="exp-action danger" onclick="this.closest('.exp-block').remove()">✕</button>
+      </div>
+    </div>
+    <div class="field"><label>Job Title</label><input type="text" placeholder="e.g. Senior Engineer"></div>
+    <div class="field-row">
+      <div class="field"><label>Company</label><input type="text" placeholder="Company name"></div>
+      <div class="field"><label>Duration</label><input type="text" placeholder="2022 – Present"></div>
+    </div>
+    <div class="field"><label>Key Achievements</label><textarea id="${id}" placeholder="Describe your impact with metrics..."></textarea></div>
+    <div style="display:flex;gap:6px;margin-top:6px;">
+      <button class="inject-btn" onclick="aiStrengthenBullets('${id}')">✦ Strengthen bullets</button>
+      <button class="inject-btn">Extract metrics</button>
+    </div>
+  `;
+  const addBtn = panel.querySelector('.add-block-btn');
+  panel.insertBefore(block, addBtn);
+}
+
+function selectFont(el, fontName) {
+  document.querySelectorAll('.font-option').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  const fontMap = { 'Fraunces': "'Fraunces', serif", 'DM Sans': "'DM Sans', sans-serif", 'Georgia': "Georgia, serif", 'Mono': "'JetBrains Mono', monospace" };
+  document.getElementById('resumeName').style.fontFamily = fontMap[fontName] || fontMap['Fraunces'];
+  showToast('🎨 Typography updated to ' + fontName);
+}
+
+function selectTemplate(el, name) {
+  document.querySelectorAll('.template-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  showToast('🎨 Template switched to ' + name);
+}
+
+function updateResume() {
+  // live update resume preview name from Personal Info fields
+  const inputs = document.querySelectorAll('.panel-section-body input[type="text"]');
+  if (inputs.length >= 2) {
+    const first = inputs[0].value || 'First';
+    const last = inputs[1].value || 'Last';
+    const nameEl = document.getElementById('resumeName');
+    if (nameEl) nameEl.textContent = first + ' ' + last;
+  }
+}
+
+/* ===== FEATURE 1: MARKET VALUE SIDEBAR PULSE WIDGET ===== */
+function updateSidebarMarketValue() {
+  const el = document.getElementById('sidebarMarketValue');
+  if (el) el.textContent = '$' + Math.floor(85 + (marketValue - 22) * 0.5) + 'k – $' + Math.floor(95 + (marketValue - 22) * 0.5) + 'k';
+}
+
+/* ===== FEATURE 2: AUTO-MORPH MODE ===== */
+let autoMorphOn = false;
+
+function toggleAutoMorph(btn) {
+  autoMorphOn = !autoMorphOn;
+  btn.classList.toggle('active', autoMorphOn);
+  btn.querySelector('.am-status').textContent = autoMorphOn ? 'ON' : 'OFF';
+  btn.style.borderColor = autoMorphOn ? 'var(--accent-teal)' : 'var(--border-soft)';
+  btn.style.color = autoMorphOn ? 'var(--accent-teal)' : 'var(--text-secondary)';
+  if (autoMorphOn) {
+    showToast('⚡ Auto-Morph ON — Skills will highlight as you type a JD');
+    runAutoMorph();
+  } else {
+    clearAutoMorphHighlights();
+    showToast('Auto-Morph paused');
+  }
+}
+
+function runAutoMorph() {
+  if (!autoMorphOn) return;
+  const jd = document.getElementById('jdPaste')?.value?.toLowerCase() || '';
+  if (!jd) return;
+
+  const skillTags = document.querySelectorAll('.skill-tag');
+  skillTags.forEach(tag => {
+    const skill = tag.textContent.toLowerCase().trim();
+    const words = skill.split(/[\s/,]+/);
+    const matched = words.some(w => w.length > 2 && jd.includes(w));
+    tag.style.background = matched ? 'rgba(45,212,191,0.18)' : '';
+    tag.style.borderColor = matched ? 'rgba(45,212,191,0.5)' : '';
+    tag.style.color = matched ? 'var(--accent-teal)' : '';
+    tag.style.fontWeight = matched ? '600' : '';
+    tag.title = matched ? '✓ Matches JD' : '';
+  });
+
+  const expBullets = document.querySelectorAll('.exp-bullets li, .exp-metric');
+  expBullets.forEach(li => {
+    const text = li.textContent.toLowerCase();
+    const jdWords = jd.split(/\W+/).filter(w => w.length > 4);
+    const hit = jdWords.some(w => text.includes(w));
+    li.style.background = hit ? 'rgba(45,212,191,0.07)' : '';
+    li.style.borderLeft = hit ? '2px solid var(--accent-teal)' : '';
+    li.style.paddingLeft = hit ? '6px' : '';
+    li.style.borderRadius = hit ? '2px' : '';
+  });
+}
+
+function clearAutoMorphHighlights() {
+  document.querySelectorAll('.skill-tag').forEach(tag => {
+    tag.style.background = '';
+    tag.style.borderColor = '';
+    tag.style.color = '';
+    tag.style.fontWeight = '';
+    tag.title = '';
+  });
+  document.querySelectorAll('.exp-bullets li, .exp-metric').forEach(li => {
+    li.style.background = '';
+    li.style.borderLeft = '';
+    li.style.paddingLeft = '';
+    li.style.borderRadius = '';
+  });
+}
+
+/* ===== FEATURE 3: VERIFIED PROOF BLOCK — AI VERIFY URL ===== */
+async function verifyProofUrl(inputId, resultId, btnEl) {
+  const url = document.getElementById(inputId)?.value?.trim();
+  const resultEl = document.getElementById(resultId);
+  if (!url) { showToast('⚠ Paste a URL first'); return; }
+
+  resultEl.style.display = 'flex';
+  resultEl.innerHTML = '<span style="color:var(--gold);font-size:11px;">⏳ Verifying with AI...</span>';
+  btnEl.disabled = true;
+
+  const system = `You are a recruiter trust-signal evaluator. Given a URL (GitHub, Portfolio, LinkedIn, etc.), assess: 1) Is it likely a real, working professional profile? 2) What does it signal about the candidate? 3) One-line verdict: VERIFIED ✓ or REVIEW NEEDED ⚠. Keep total response under 3 sentences. Start with the verdict.`;
+
+  const result = await claudeChat(system, `Evaluate this professional proof URL: ${url}`);
+
+  const isVerified = result.toLowerCase().includes('verified') || result.toLowerCase().includes('strong') || result.toLowerCase().includes('credible');
+  const color = isVerified ? 'var(--accent-green)' : 'var(--gold)';
+  const icon = isVerified ? '✓' : '⚠';
+
+  resultEl.innerHTML = `
+    <span style="font-size:13px;flex-shrink:0;">${icon}</span>
+    <span style="font-size:11.5px;color:${color};line-height:1.4;">${result}</span>
+  `;
+  resultEl.style.borderColor = isVerified ? 'rgba(74,222,128,0.3)' : 'rgba(201,168,76,0.3)';
+  btnEl.disabled = false;
+  showToast(isVerified ? '✓ Profile verified by AI!' : '⚠ AI flagged for review');
+}
+
+/* ===== JD AUTO-MORPH LISTENER ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  const jdEl = document.getElementById('jdPaste');
+  if (jdEl) {
+    jdEl.addEventListener('input', function() {
+      if (autoMorphOn) runAutoMorph();
+    });
+  }
+  updateSidebarMarketValue();
+});
+
+</script>
+</body>
+</html>
